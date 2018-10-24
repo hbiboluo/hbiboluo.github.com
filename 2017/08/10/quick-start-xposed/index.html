@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>逆水行舟</title>
+  <title>Xposed快速指南 | 逆水行舟</title>
   <meta name="HandheldFriendly" content="True">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="shortcut icon" href="/">
@@ -119,85 +119,16 @@
     <div class="l_body">
     <div class='container clearfix'>
         <div class='l_main'>
+            <article id="post-quick-start-xposed" class="post white-box article-type-post" itemscope="" itemprop="blogPost">
+    <section class="meta">
+        <h1 class="title">
             
-
-<section class="post-list">
-    
-    
-        <div class="post-wrapper">
-            <article class="post reveal ">
-    <section class="meta">
-        <h2 class="title">
-            <a href="/2018/01/05/productivity/">
-                
-                    程序猿Mac、Linux工具推荐
-                
-            </a>
-        </h2>
+                Xposed快速指南
+            
+        </h1>
         <time>
-            <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp;2018-01-05
-        </time>
-        
-    
-    <div class="cats">
-        <a href="/categories/其他/">其他</a>
-    </div>
-
-
-    </section>
-
-    <section class="article typo">
-        <h1 id="程序猿"><a href="#程序猿" class="headerlink" title="程序猿"></a>程序猿</h1><ul>
-<li><strong>5星</strong> Shadowsocks: 科学上网 </li>
-<li><strong>5星</strong> Spacemacs: Vim + Emacs</li>
-<li><strong>5星</strong> Dash「Mac Only」: 查阅API文档必备，结合<code>Alfred</code>食用效果更佳</li>
-<li><strong>5星</strong> Proxifier「Mac Only」: 应用即使没有Proxy设置依然可以科学上网</li>
-<li><strong>5星</strong> JupyterLab: Python必备</li>
-<li><strong>5星</strong> Tampermonkey: Chrome插件，Hack网页必备</li>
-</ul>
-<h1 id="终端"><a href="#终端" class="headerlink" title="终端"></a>终端</h1><ul>
-<li><strong>5星</strong> iTerm「Mac Only」: Mac下很爽的终端程序</li>
-<li><strong>5星</strong> oh-my-zsh: 终端增强，自动补全……</li>
-<li><strong>5星</strong> htop: 服务器进程管理小能手</li>
-<li><strong>5星</strong> tmux: 结合<code>oh-my-zsh</code>的插件，<code>ta</code>直接<code>attach</code>到指定会话</li>
-<li><strong>5星</strong> mosh: 长时间连接server必备，断线自动恢复</li>
-<li><strong>5星</strong> tldr: 指令的快速查询手册，Too Long Don’t Read.</li>
-</ul>
-<h1 id="效率"><a href="#效率" class="headerlink" title="效率"></a>效率</h1><ul>
-<li><strong>5星</strong> Alfred「Mac Only」: 强力推荐</li>
-</ul>
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
-<li><strong>6星</strong> <strong>Anki</strong>: 记忆工具，强烈推荐，可多平台同步使用！！！</li>
-<li><strong>5星</strong> 网易云音乐</li>
-<li><strong>5星</strong> <em>脑图工具：MindNode、XMind、FreeMind</em></li>
-</ul>
-
-        
-
-        
-            <div class="full-width auto-padding tags">
-                
-                    <a href="/tags/效率/"><i class="fa fa-tag fa-fw"></i>&nbsp;效率</a>
-                
-            </div>
-        
-    </section>
-</article>
-
-        </div>
-    
-        <div class="post-wrapper">
-            <article class="post reveal ">
-    <section class="meta">
-        <h2 class="title">
-            <a href="/2017/08/10/quick-start-xposed/">
-                
-                    Xposed快速指南
-                
-            </a>
-        </h2>
-        <time>
-            <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp;2017-08-10
+            <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp;2017-08-10&nbsp;&nbsp;
+            <i class="fa fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
         </time>
         
     
@@ -209,7 +140,9 @@
     </section>
 
     <section class="article typo">
-        <h1 id="Xposed是什么"><a href="#Xposed是什么" class="headerlink" title="Xposed是什么"></a>Xposed是什么</h1><p><a href="https://github.com/rovo89/XposedBridge/wiki" target="_blank" rel="noopener">Xposed</a>是一个动态修改Android运行时的框架。</p>
+
+        <div class="article-entry" itemprop="articleBody">
+            <h1 id="Xposed是什么"><a href="#Xposed是什么" class="headerlink" title="Xposed是什么"></a>Xposed是什么</h1><p><a href="https://github.com/rovo89/XposedBridge/wiki" target="_blank" rel="noopener">Xposed</a>是一个动态修改Android运行时的框架。</p>
 <p>“Zygote”进程「Android运行时核心」是在手机启动时由/init.rc脚本启动，由/system/bin/app_process加载所有classes并调用初始化方法。</p>
 <p>而Xposed框架被安装后，一个扩展的<code>app_process</code>会被安装到/system/bin/目录，将添加额外的jar包<code>/data/data/de.robv.android.xposed.installer/bin/XposedBridge.jar</code>到classpath并在指定位置调用方法。<code>XposedBridge</code>进入了类加载的世界，就可以主宰VM了。</p>
 <p><code>XposedBridge</code>中的<code>hookMethodNative</code>方法是Xposed入口，调用<code>handleHookedMethod</code>处理具体逻辑，传递method信息，可以回调注册过该method的hook方法，对参数进行修改，修改运行结果等等。</p>
@@ -263,26 +196,86 @@
 <li><a href="https://developer.android.com/studio/command-line/dumpsys.html" target="_blank" rel="noopener">dumpsys的用法</a></li>
 </ul>
 
-        
+        </div>
 
         
-            <div class="full-width auto-padding tags">
+            <div class="article-tags tags">
                 
-                    <a href="/tags/快速指南/"><i class="fa fa-tag fa-fw"></i>&nbsp;快速指南</a>
+                    <a href="/tags/快速指南/"><i class="fa fa-tag fa-fw" aria-hidden="true"></i>&nbsp;快速指南</a>
                 
-                    <a href="/tags/Android/"><i class="fa fa-tag fa-fw"></i>&nbsp;Android</a>
+                    <a href="/tags/Android/"><i class="fa fa-tag fa-fw" aria-hidden="true"></i>&nbsp;Android</a>
                 
-                    <a href="/tags/Xposed/"><i class="fa fa-tag fa-fw"></i>&nbsp;Xposed</a>
+                    <a href="/tags/Xposed/"><i class="fa fa-tag fa-fw" aria-hidden="true"></i>&nbsp;Xposed</a>
                 
             </div>
         
+
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fa fa-chevron-left" aria-hidden="true"></i>&nbsp;上一篇</h6>
+                            <h4>
+                                <a href="/2018/01/05/productivity/" rel="prev" title="程序猿Mac、Linux工具推荐">
+                                  
+                                      程序猿Mac、Linux工具推荐
+                                  
+                                </a>
+                            </h4>
+                            
+                                <h6 class="tags">
+                                    
+                                        <i class="fa fa-tag fa-fw"></i>效率
+                                    
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+            </div>
+        
+
     </section>
+
 </article>
 
-        </div>
-    
-</section>
+<br>
 
+<!-- 显示推荐文章和评论 -->
+
+    <article class="post white-box comments">
+        <section class="article typo">
+
+            
+
+            
+
+                
+                    <h4><i class="fa fa-comments fa-fw" aria-hidden="true"></i>&nbsp;Disqus评论</h4>
+                    <section id="comments">
+                        <div id="disqus_thread">
+                            ⚠️  无法加载评论系统，请确保您的网络能够正常访问 <a href="https://disqus.com">Disqus</a> 。
+                        </div>
+                    </section>
+                
+
+                
+
+                
+            
+
+        </section>
+    </article>
+
+
+<script>
+    window.subData = {
+        title: 'Xposed快速指南',
+        tools: true
+    }
+</script>
 
 
         </div>
@@ -498,6 +491,24 @@
 <script src="/js/search.js"></script>
 <script src="/js/app.js"></script>
 
+
+    
+        <script>
+            var disqus_shortname = 'ni-shui-xing-zhou';
+            
+                var disqus_url = 'http://www.hbiboluo.com/2017/08/10/quick-start-xposed/';
+            
+            (function(){
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+    
+    
+    
 
 
     <script>setLoadingBarProgress(100);</script>
