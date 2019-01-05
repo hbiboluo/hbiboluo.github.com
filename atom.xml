@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>逆水行舟</title>
+  <title>01世界</title>
   
-  
+  <subtitle>「0和1的世界|从0到1」</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://www.hbiboluo.com/"/>
+  <link href="https://www.hbiboluo.com/"/>
   <updated>2018-10-24T09:43:12.834Z</updated>
-  <id>http://www.hbiboluo.com/</id>
+  <id>https://www.hbiboluo.com/</id>
   
   <author>
     <name>hbiboluo</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>程序猿Mac、Linux工具推荐</title>
-    <link href="http://www.hbiboluo.com/2018/01/05/productivity/"/>
-    <id>http://www.hbiboluo.com/2018/01/05/productivity/</id>
+    <link href="https://www.hbiboluo.com/2018/01/05/productivity/"/>
+    <id>https://www.hbiboluo.com/2018/01/05/productivity/</id>
     <published>2018-01-04T16:00:00.000Z</published>
     <updated>2018-10-24T09:43:12.834Z</updated>
     
@@ -36,17 +36,17 @@
     
     </summary>
     
-      <category term="其他" scheme="http://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
+      <category term="其他" scheme="https://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
     
     
-      <category term="效率" scheme="http://www.hbiboluo.com/tags/%E6%95%88%E7%8E%87/"/>
+      <category term="效率" scheme="https://www.hbiboluo.com/tags/%E6%95%88%E7%8E%87/"/>
     
   </entry>
   
   <entry>
     <title>Xposed快速指南</title>
-    <link href="http://www.hbiboluo.com/2017/08/10/quick-start-xposed/"/>
-    <id>http://www.hbiboluo.com/2017/08/10/quick-start-xposed/</id>
+    <link href="https://www.hbiboluo.com/2017/08/10/quick-start-xposed/"/>
+    <id>https://www.hbiboluo.com/2017/08/10/quick-start-xposed/</id>
     <published>2017-08-09T16:00:00.000Z</published>
     <updated>2018-10-24T09:27:23.622Z</updated>
     
@@ -61,21 +61,21 @@
     
     </summary>
     
-      <category term="技术" scheme="http://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+      <category term="技术" scheme="https://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
     
     
-      <category term="快速指南" scheme="http://www.hbiboluo.com/tags/%E5%BF%AB%E9%80%9F%E6%8C%87%E5%8D%97/"/>
+      <category term="快速指南" scheme="https://www.hbiboluo.com/tags/%E5%BF%AB%E9%80%9F%E6%8C%87%E5%8D%97/"/>
     
-      <category term="Android" scheme="http://www.hbiboluo.com/tags/Android/"/>
+      <category term="Android" scheme="https://www.hbiboluo.com/tags/Android/"/>
     
-      <category term="Xposed" scheme="http://www.hbiboluo.com/tags/Xposed/"/>
+      <category term="Xposed" scheme="https://www.hbiboluo.com/tags/Xposed/"/>
     
   </entry>
   
   <entry>
     <title>关于闭包</title>
-    <link href="http://www.hbiboluo.com/2015/01/10/closure/"/>
-    <id>http://www.hbiboluo.com/2015/01/10/closure/</id>
+    <link href="https://www.hbiboluo.com/2015/01/10/closure/"/>
+    <id>https://www.hbiboluo.com/2015/01/10/closure/</id>
     <published>2015-01-09T16:00:00.000Z</published>
     <updated>2018-10-24T09:57:11.000Z</updated>
     
@@ -90,19 +90,19 @@
     
     </summary>
     
-      <category term="技术" scheme="http://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+      <category term="技术" scheme="https://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
     
     
-      <category term="Python" scheme="http://www.hbiboluo.com/tags/Python/"/>
+      <category term="Python" scheme="https://www.hbiboluo.com/tags/Python/"/>
     
-      <category term="JS" scheme="http://www.hbiboluo.com/tags/JS/"/>
+      <category term="JS" scheme="https://www.hbiboluo.com/tags/JS/"/>
     
   </entry>
   
   <entry>
     <title>在压力下思考</title>
-    <link href="http://www.hbiboluo.com/2014/03/07/thinking-in-pressure/"/>
-    <id>http://www.hbiboluo.com/2014/03/07/thinking-in-pressure/</id>
+    <link href="https://www.hbiboluo.com/2014/03/07/thinking-in-pressure/"/>
+    <id>https://www.hbiboluo.com/2014/03/07/thinking-in-pressure/</id>
     <published>2014-03-06T16:00:00.000Z</published>
     <updated>2018-10-24T10:03:53.916Z</updated>
     
@@ -118,17 +118,17 @@
     
     </summary>
     
-      <category term="其他" scheme="http://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
+      <category term="其他" scheme="https://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
     
     
-      <category term="思考" scheme="http://www.hbiboluo.com/tags/%E6%80%9D%E8%80%83/"/>
+      <category term="思考" scheme="https://www.hbiboluo.com/tags/%E6%80%9D%E8%80%83/"/>
     
   </entry>
   
   <entry>
     <title>Jekyll之道,Geek之道</title>
-    <link href="http://www.hbiboluo.com/2013/04/24/dao-of-jekyll/"/>
-    <id>http://www.hbiboluo.com/2013/04/24/dao-of-jekyll/</id>
+    <link href="https://www.hbiboluo.com/2013/04/24/dao-of-jekyll/"/>
+    <id>https://www.hbiboluo.com/2013/04/24/dao-of-jekyll/</id>
     <published>2013-04-23T16:00:00.000Z</published>
     <updated>2018-10-24T10:01:52.935Z</updated>
     
@@ -143,10 +143,10 @@
     
     </summary>
     
-      <category term="其他" scheme="http://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
+      <category term="其他" scheme="https://www.hbiboluo.com/categories/%E5%85%B6%E4%BB%96/"/>
     
     
-      <category term="效率" scheme="http://www.hbiboluo.com/tags/%E6%95%88%E7%8E%87/"/>
+      <category term="效率" scheme="https://www.hbiboluo.com/tags/%E6%95%88%E7%8E%87/"/>
     
   </entry>
   
