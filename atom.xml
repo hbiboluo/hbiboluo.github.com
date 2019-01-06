@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.hbiboluo.com/"/>
-  <updated>2019-01-05T09:41:28.080Z</updated>
+  <updated>2019-01-06T04:24:48.027Z</updated>
   <id>https://www.hbiboluo.com/</id>
   
   <author>
@@ -17,11 +17,37 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何避免MySQL死锁（一）- 引子</title>
+    <link href="https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-1/"/>
+    <id>https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-1/</id>
+    <published>2019-01-05T22:00:00.000Z</published>
+    <updated>2019-01-06T04:24:48.027Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>事情是这样开始的……</p><p>这两天，好友L同学接到新需求，通宵达旦，终于在deadline前顺利上线了。松口气一块约了个饭，话还没聊半晌，leader却来电话了，线上MySQL并发死锁，DBA把日志都发过来了，务必赶紧解决，饭未毕人已凉……</p><p>那如何避免出现MySQL死锁问题呢？于是萌生了写一个系列文章，查缺补漏的同时也总结一下对于MySQL死锁问题的理解。</p><h1 id="哲学家就餐问题"><a href="#哲学家就餐问题" class="headerlink" title="哲学家就餐问题"></a>哲学家就餐问题</h1><p>死锁是在并发场景下产生的，经典的「哲学家就餐问题」很好地抽象了并发过程中的资源竞争情况。</p><p>它可以这样表述，假设有五位哲学家围坐在一张圆形餐桌旁，做以下两件事情之一：吃饭，或者思考。吃东西的时候，他们就停止思考，思考的时候也停止吃东西。每两个哲学家之间有一只筷子。而他们只能使用自己左右手边的那两只筷子。<br><img src="/assets/images/mysql/philosopher.jpg" alt="哲学家就餐问题"></p><p>那么这个模型下的并发问题可以这样描述：</p><ul><li>死锁：每个哲学家都同时拿起左手的筷子，等待另一边的筷子</li><li>活锁：每个哲学家都同时拿起左手的筷子，然后发现拿不到另一边的筷子，于是都放下已拿起的筷子，周而复始……</li><li>饥饿：某个哲学家拿到两边的筷子之后，一直不放，他两边的哲学家就一直处于饥饿状态</li></ul><p>死锁问题模型可以抽象为一个有向图，节点为线程/事务，有向边表示资源/锁的依赖或者等待关系，当图中出现环时，死锁出现。</p><h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>这个系列文章的思路是这样的设计的：</p><ol><li>如何避免MySQL死锁（一）- 引子</li><li>如何避免MySQL死锁（二）- MySQL锁：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li><li>如何避免MySQL死锁（三）- SQL语句与锁：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li><li>如何避免MySQL死锁（四）- 如何阅读MySQL的死锁日志：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li><li>如何避免MySQL死锁（五）- 实例分析：验证与练习</li><li>如何避免MySQL死锁（六）- 解决MySQL死锁的一般原则：总结一些经验</li></ol><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://zh.wikipedia.org/wiki/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">哲学家就餐问题</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;引子&quot;&gt;&lt;a href=&quot;#引子&quot; class=&quot;headerlink&quot; title=&quot;引子&quot;&gt;&lt;/a&gt;引子&lt;/h1&gt;&lt;p&gt;事情是这样开始的……&lt;/p&gt;
+&lt;p&gt;这两天，好友L同学接到新需求，通宵达旦，终于在deadline前顺利上线了。松口气一块约了个饭，话还没聊
+      
+    
+    </summary>
+    
+      <category term="技术" scheme="https://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="MySQL" scheme="https://www.hbiboluo.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
     <title>程序猿利器推荐</title>
     <link href="https://www.hbiboluo.com/2018/12/15/productivity/"/>
     <id>https://www.hbiboluo.com/2018/12/15/productivity/</id>
     <published>2018-12-14T16:00:00.000Z</published>
-    <updated>2019-01-05T09:41:28.080Z</updated>
+    <updated>2019-01-05T17:05:34.472Z</updated>
     
     <content type="html"><![CDATA[<p><img src="/assets/images/production.jpg" alt="效率工具"></p><p>工欲善其事，必先利其器，推荐一些自己常用的工具。</p><h1 id="程序猿"><a href="#程序猿" class="headerlink" title="程序猿"></a>程序猿</h1><ul><li><strong>5星</strong> Shadowsocks: 科学上网 </li><li><strong>5星</strong> Spacemacs: Vim + Emacs</li><li><strong>5星</strong> Dash「Mac Only」: 查阅API文档必备，结合<code>Alfred</code>食用效果更佳</li><li><strong>5星</strong> Proxifier「Mac Only」: 应用即使没有Proxy设置依然可以科学上网</li><li><strong>5星</strong> JupyterLab: Python必备</li><li><strong>5星</strong> Tampermonkey: Chrome插件，Hack网页必备</li><li><strong>5星</strong> Intellij IDEA: Java IDE</li></ul><h1 id="终端"><a href="#终端" class="headerlink" title="终端"></a>终端</h1><ul><li><strong>5星</strong> iTerm「Mac Only」: Mac下很爽的终端程序</li><li><strong>5星</strong> oh-my-zsh: 终端增强，自动补全……</li><li><strong>5星</strong> htop: 服务器进程管理小能手</li><li><strong>5星</strong> tmux: 结合<code>oh-my-zsh</code>的插件，<code>ta</code>直接<code>attach</code>到指定会话</li><li><strong>5星</strong> mosh: 长时间连接server必备，断线自动恢复</li><li><strong>5星</strong> tldr: 指令的快速查询手册，Too Long Don’t Read</li><li><strong>4星</strong> mycli: 终端MySQL客户端，带Tab补全功能</li></ul><h1 id="效率"><a href="#效率" class="headerlink" title="效率"></a>效率</h1><ul><li><strong>5星</strong> Alfred: 强力推荐</li><li><strong>5星</strong> Pomodoro Time: 番茄工作法工具，可追踪每日各任务所用的番茄数</li></ul><h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul><li><strong>6星</strong> <strong>Anki</strong>: 记忆工具，强烈推荐，可多平台同步使用！！！</li><li><strong>5星</strong> 网易云音乐</li><li><strong>5星</strong> 脑图工具：MindNode、XMind、FreeMind</li></ul>]]></content>
     
