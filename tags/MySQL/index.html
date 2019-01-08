@@ -99,7 +99,11 @@
                             </li>
                         
                             <li role="presentation" class="text-center">
-                                <a href="/archives/"><i class="fa "></i>时间轴</a>
+                                <a href="/categories/技术/"><i class="fa "></i>技术</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>存档</a>
                             </li>
                         
                             <li role="presentation" class="text-center">
@@ -127,6 +131,64 @@
     
 </h3>
 
+    <article class="post">
+        
+            <div class="post-media">
+                <a href="/2019/01/07/avoid-mysql-deadlock-3/">
+                    <img class="img-ajax" src="/img/loading.gif" data-src="/assets/images/t-deadlock.png" alt="如何避免MySQL死锁（三）- SQL语句与锁">
+                </a>
+            </div>
+        
+        <div class="post-content">
+            <div class="post-head home-post-head">
+                <h1 class="post-title">
+                    <a href="/2019/01/07/avoid-mysql-deadlock-3/">如何避免MySQL死锁（三）- SQL语句与锁</a>
+                </h1>
+                <div class="post-meta">  &bull;
+                    <time class="post-date" datetime="" title="">
+                        2019年01月07日
+                    </time>
+                </div>
+            </div>
+            <p class="brief">
+                
+                    注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
+两阶段锁协议将事务分解成加锁和解锁两个阶段：
+
+加锁该阶段可以进行加锁操作，在对任何数据进行读操作之前要申请并获得S锁；而在进行写操作之前，需要申请X...
+                
+            </p>
+        </div>
+    </article>
+ 
+    <article class="post">
+        
+            <div class="post-media">
+                <a href="/2019/01/06/avoid-mysql-deadlock-2/">
+                    <img class="img-ajax" src="/img/loading.gif" data-src="/assets/images/t-deadlock.png" alt="如何避免MySQL死锁（二）- MySQL锁">
+                </a>
+            </div>
+        
+        <div class="post-content">
+            <div class="post-head home-post-head">
+                <h1 class="post-title">
+                    <a href="/2019/01/06/avoid-mysql-deadlock-2/">如何避免MySQL死锁（二）- MySQL锁</a>
+                </h1>
+                <div class="post-meta">  &bull;
+                    <time class="post-date" datetime="" title="">
+                        2019年01月06日
+                    </time>
+                </div>
+            </div>
+            <p class="brief">
+                
+                    注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
+MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以分表锁、页锁、行锁；从细节上来讲可以分为记录锁、Gap锁、Next-Key锁、插入意向锁。...
+                
+            </p>
+        </div>
+    </article>
+ 
     <article class="post">
         
             <div class="post-media">
@@ -221,7 +283,7 @@
         
     <div class="widget">
         <h3 class="title">分类</h3>
-        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/其他/"><i class="fa" aria-hidden="true">其他</i></a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/技术/"><i class="fa" aria-hidden="true">技术</i></a><span class="category-list-count">1</span></li></ul>
+        <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/其他/"><i class="fa" aria-hidden="true">其他</i></a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/技术/"><i class="fa" aria-hidden="true">技术</i></a><span class="category-list-count">3</span></li></ul>
     </div>
 
 
@@ -231,7 +293,7 @@
     <h3 class="title">标签云</h3>
     <div class="content tag-cloud">
         
-            <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/效率/" style="font-size: 10px;">效率</a>
+            <a href="/tags/MySQL/" style="font-size: 20px;">MySQL</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/效率/" style="font-size: 10px;">效率</a>
         
     </div>
   </div>

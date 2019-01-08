@@ -29,7 +29,7 @@
     <!--Title-->
 
 
-<title>程序猿利器推荐 | 01世界</title>
+<title>如何避免MySQL死锁（三）- SQL语句与锁 | 01世界</title>
 
 
     <link rel="alternate" href="/atom.xml" title="01世界" type="application/atom+xml">
@@ -127,9 +127,9 @@
                     <p id="process"></p>
 <article class="post">
     <div class="post-head">
-        <h1 id="程序猿利器推荐">
+        <h1 id="如何避免MySQL死锁（三）- SQL语句与锁">
             
-	            程序猿利器推荐
+	            如何避免MySQL死锁（三）- SQL语句与锁
             
         </h1>
         <div class="post-meta">
@@ -137,8 +137,8 @@
     
     <span class="categories-meta fa-wrap">
         <i class="fa fa-folder-open-o"></i>
-        <a href="/categories/其他">
-            其他
+        <a href="/categories/技术">
+            技术
         </a>
     </span>
     
@@ -149,12 +149,8 @@
         <span class="tags-meta">
             
                 
-                    <a href="/tags/效率" title="效率">
-                        效率
-                    </a>
-                
-                    <a href="/tags/工具" title="工具">
-                        工具
+                    <a href="/tags/MySQL" title="MySQL">
+                        MySQL
                     </a>
                 
             
@@ -166,7 +162,7 @@
         
         <span class="fa-wrap">
             <i class="fa fa-clock-o"></i>
-            <span class="date-meta">2018/12/15</span>
+            <span class="date-meta">2019/01/07</span>
         </span>
         
     
@@ -177,34 +173,149 @@
     </div>
     
     <div class="post-body post-content">
-        <p><img src="/assets/images/production.jpg" alt="效率工具"></p>
-<p>工欲善其事，必先利其器，推荐一些自己常用的工具。</p>
-<h1 id="程序猿"><a href="#程序猿" class="headerlink" title="程序猿"></a>程序猿</h1><ul>
-<li><strong>5星</strong> Shadowsocks: 科学上网 </li>
-<li><strong>5星</strong> Spacemacs: Vim + Emacs</li>
-<li><strong>5星</strong> Dash「Mac Only」: 查阅API文档必备，结合<code>Alfred</code>食用效果更佳</li>
-<li><strong>5星</strong> Proxifier「Mac Only」: 应用即使没有Proxy设置依然可以科学上网</li>
-<li><strong>5星</strong> JupyterLab: Python必备</li>
-<li><strong>5星</strong> Tampermonkey: Chrome插件，Hack网页必备</li>
-<li><strong>5星</strong> Intellij IDEA: Java IDE</li>
+        <p>注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论<code>InnoDB</code>引擎。</p>
+<h1 id="两阶段锁协议"><a href="#两阶段锁协议" class="headerlink" title="两阶段锁协议"></a>两阶段锁协议</h1><p>将事务分解成加锁和解锁两个阶段：</p>
+<ol>
+<li>加锁<br>该阶段可以进行加锁操作，在对任何数据进行读操作之前要申请并获得S锁；而在进行写操作之前，需要申请X锁。加锁不成功则进入等待状态，而不能再加其它锁。</li>
+<li>解锁<br>事务进入解锁阶段将释放其持有的锁，该阶段只能进行解锁操作，而不能再加其它锁。</li>
+</ol>
+<h1 id="加锁影响因子"><a href="#加锁影响因子" class="headerlink" title="加锁影响因子"></a>加锁影响因子</h1><p>SQL语句如何加锁主要受以下两个关键要素的影响：</p>
+<ul>
+<li>事务隔离级别</li>
+<li>索引：查询是否走索引？什么类型的索引</li>
 </ul>
-<h1 id="终端"><a href="#终端" class="headerlink" title="终端"></a>终端</h1><ul>
-<li><strong>5星</strong> iTerm「Mac Only」: Mac下很爽的终端程序</li>
-<li><strong>5星</strong> oh-my-zsh: 终端增强，自动补全……</li>
-<li><strong>5星</strong> htop: 服务器进程管理小能手</li>
-<li><strong>5星</strong> tmux: 结合<code>oh-my-zsh</code>的插件，<code>ta</code>直接<code>attach</code>到指定会话</li>
-<li><strong>5星</strong> mosh: 长时间连接server必备，断线自动恢复</li>
-<li><strong>5星</strong> tldr: 指令的快速查询手册，Too Long Don’t Read</li>
-<li><strong>4星</strong> mycli: 终端MySQL客户端，带Tab补全功能</li>
+<h1 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h1><p>事务实现了不同的隔离级别，如下：</p>
+<table>
+<thead>
+<tr>
+<th>事务隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read Uncommitted</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>Read Committed</td>
+<td>-</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>Repeatable Read</td>
+<td>-</td>
+<td>-</td>
+<td>是</td>
+</tr>
+<tr>
+<td>Serializable</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>问题解释如下：</p>
+<ul>
+<li>脏读：一个事务处理过程里读取了另一个未提交的事务中的数据。</li>
+<li>不可重复读：对于数据库中的某个数据，一个事务范围内多次查询却返回了不同的数据值，这是由于在查询间隔，被另一个事务修改并提交了。</li>
+<li>幻读：主要是说多次读取一个范围内的记录(包括直接查询所有记录结果或者做聚合统计), 发现结果不一致(标准档案一般指记录增多, 记录的减少应该也算是幻读)。</li>
 </ul>
-<h1 id="效率"><a href="#效率" class="headerlink" title="效率"></a>效率</h1><ul>
-<li><strong>5星</strong> Alfred: 强力推荐</li>
-<li><strong>5星</strong> Pomodoro Time: 番茄工作法工具，可追踪每日各任务所用的番茄数</li>
+<p>特别的，<code>RR</code>可重复读的级别可以部分解决幻读问题：</p>
+<ul>
+<li><code>快照读</code>使用了MVCC, 所以也就避免了部分幻读的出现！「读取后被删除，重新插入之类」</li>
+<li><code>当前读</code>使用了Gap锁，不存在幻读现象</li>
 </ul>
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
-<li><strong>6星</strong> <strong>Anki</strong>: 记忆工具，强烈推荐，可多平台同步使用！！！</li>
-<li><strong>5星</strong> 网易云音乐</li>
-<li><strong>5星</strong> 脑图工具：MindNode、XMind、FreeMind</li>
+<p>但是<code>RR</code>无法解决如下情况的幻读：</p>
+<table>
+<thead>
+<tr>
+<th>事务一</th>
+<th>事务二</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>begin</td>
+<td>begin</td>
+</tr>
+<tr>
+<td>select * from demo;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert into demo(id) values(1);</td>
+</tr>
+<tr>
+<td></td>
+<td>commit;</td>
+</tr>
+<tr>
+<td>select * from demo;</td>
+<td></td>
+</tr>
+<tr>
+<td>insert into demo(id) values(1);</td>
+<td></td>
+</tr>
+<tr>
+<td>查询不到id为1的记录，插入却报错</td>
+</tr>
+</tbody>
+</table>
+<h1 id="如何加锁"><a href="#如何加锁" class="headerlink" title="如何加锁"></a>如何加锁</h1><h2 id="1-Consistent-Reads-–-一致性读、快照读"><a href="#1-Consistent-Reads-–-一致性读、快照读" class="headerlink" title="1. Consistent Reads – 一致性读、快照读"></a>1. Consistent Reads – 一致性读、快照读</h2><ul>
+<li>select … from<ul>
+<li>(<strong>非SERIALIZABLE</strong>) 快照读，不加锁</li>
+<li>(<strong>SERIALIZABLE</strong>) 加锁<ul>
+<li>(unique index) record locks</li>
+<li>(其他) next-key locks</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-Locking-Reads-–-当前读"><a href="#2-Locking-Reads-–-当前读" class="headerlink" title="2. Locking Reads – 当前读"></a>2. Locking Reads – 当前读</h2><ul>
+<li>select、update、delete<ul>
+<li>select … for update | select … lock in share mode<ul>
+<li>(<strong>RR</strong>)<ul>
+<li>(unique index) record locks</li>
+<li>(其他) next-key locks</li>
+</ul>
+</li>
+<li>(<strong>其他</strong>) record locks</li>
+</ul>
+</li>
+<li>update … where …(同上)</li>
+<li>delete … where …(同上)</li>
+</ul>
+</li>
+<li>insert<ul>
+<li>insert<ul>
+<li>(<strong>RR</strong>) gap locks</li>
+<li>(<strong>RC</strong>) record locks</li>
+</ul>
+</li>
+<li>insert into T select … from S where …<ul>
+<li>T表的insert锁同<code>insert</code>加锁方式</li>
+<li>S表<ul>
+<li>(<strong>RC</strong> | <strong>SERIALIZABLE(<code>innodb_locks_unsafe_for_binlog</code>开启)</strong>) 快照读，不加锁</li>
+<li>(其他) next-key locks</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locks-set.html" target="_blank" rel="noopener">官方文档 - innodb如何加锁</a></li>
 </ul>
 
     </div>
@@ -223,11 +334,11 @@
 
 <div class="article-nav prev-next-wrap clearfix">
     
-        <a href="/2019/01/06/avoid-mysql-deadlock-1/" class="pre-post btn btn-default" title="如何避免MySQL死锁（一）- 引子">
-            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-            <span class="hidden-xs">如何避免MySQL死锁（一）- 引子</span>
-        </a>
     
+        <a href="/2019/01/06/avoid-mysql-deadlock-2/" class="next-post btn btn-default" title="如何避免MySQL死锁（二）- MySQL锁">
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">如何避免MySQL死锁（二）- MySQL锁</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
     
 </div>
 
@@ -269,7 +380,7 @@
     <div class="widget">
         <h3 class="title">文章目录</h3>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#程序猿"><span class="toc-text">程序猿</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#终端"><span class="toc-text">终端</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#效率"><span class="toc-text">效率</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#两阶段锁协议"><span class="toc-text">两阶段锁协议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#加锁影响因子"><span class="toc-text">加锁影响因子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事务的隔离级别"><span class="toc-text">事务的隔离级别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#如何加锁"><span class="toc-text">如何加锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Consistent-Reads-–-一致性读、快照读"><span class="toc-text">1. Consistent Reads – 一致性读、快照读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Locking-Reads-–-当前读"><span class="toc-text">2. Locking Reads – 当前读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
         
     </div>
 </aside>

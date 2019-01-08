@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="01世界">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="https://www.hbiboluo.com">
+    <!--SEO-->
+
+
+
+<meta name="keywords" content="Java,Python,架构,工程,国学">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+    <!--Title-->
+
+
+<title>如何避免MySQL死锁（二）- MySQL锁 | 01世界</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="01世界" type="application/atom+xml">
+
+
+    <link rel="icon" href="/assets/img/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.5.0">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+
+
+    
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header" style="background-image:url(/assets/img/head.jpg)">
+    <div class="main-header-box">
+      <!-- <a class="header-avatar" href="/" title='01世界'> -->
+      <!-- <img class='img-responsive center-block' style="border:solid; border-width:3px;" src='/assets/img/avatar.png' /> -->
+      <!-- </a> -->
+      <div class="branding">
+        <h1 class="htitle"> 01世界</h1>
+        <h3 class="hstitle"> 「0和1的世界|从0到1」</h3> 
+    	</div>
+    </div>
+</header>
+
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://www.hbiboluo.com">01世界</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/技术/"><i class="fa "></i>技术</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>存档</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/reading/"><i class="fa "></i>书单</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/about/"><i class="fa "></i>关于</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="如何避免MySQL死锁（二）- MySQL锁">
+            
+	            如何避免MySQL死锁（二）- MySQL锁
+            
+        </h1>
+        <div class="post-meta">
+    
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="/categories/技术">
+            技术
+        </a>
+    </span>
+    
+
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+                
+                    <a href="/tags/MySQL" title="MySQL">
+                        MySQL
+                    </a>
+                
+            
+        </span>
+    </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/01/06</span>
+        </span>
+        
+    
+</div>
+
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <p>注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论<code>InnoDB</code>引擎。</p>
+<p>MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以分表锁、页锁、行锁；从细节上来讲可以分为记录锁、Gap锁、Next-Key锁、插入意向锁。</p>
+<p>本节，我们从以下两个角度来解析：</p>
+<ol>
+<li>什么锁（重点在于锁的性质）</li>
+<li>锁什么（重点在于锁的粒度）</li>
+</ol>
+<h1 id="1-什么锁"><a href="#1-什么锁" class="headerlink" title="1. 什么锁"></a>1. 什么锁</h1><p>采用了<a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81" target="_blank" rel="noopener">读写锁</a>的设计，区别读、写操作。如下：</p>
+<ul>
+<li>Shared Lock(S)：共享锁，读锁。（允许多个读，写需等待。）</li>
+<li>Exclusive Lock(X)：排他锁，写锁。（唯一许可。）</li>
+</ul>
+<h1 id="2-锁什么"><a href="#2-锁什么" class="headerlink" title="2. 锁什么"></a>2. 锁什么</h1><p>从锁的粒度来看，分为表锁、行锁以及介于两者之间的页锁，由于<code>InnoDB</code>只支持表锁和行锁，以下我们只讨论这两种。</p>
+<h2 id="2-1-表锁"><a href="#2-1-表锁" class="headerlink" title="2.1 表锁"></a>2.1 表锁</h2><h3 id="2-1-1-Intention-Lock-意向锁"><a href="#2-1-1-Intention-Lock-意向锁" class="headerlink" title="2.1.1 Intention Lock - 意向锁"></a>2.1.1 Intention Lock - 意向锁</h3><p>首先要明确的是<strong>意向锁</strong>是表锁，代表了是否设置了表中的行级锁，是为了支持多种粒度锁同时存在而设计。</p>
+<p>假设需要向一个表添加一个表级X锁：</p>
+<ul>
+<li>没有意向锁，则需要遍历所有整个表判断是否有行锁的存在，以免发生冲突；</li>
+<li>有意向锁，则无需遍历，通过查询表锁之间是否互相兼容即可。</li>
+</ul>
+<p>意向锁表明一个事务稍后要获得针对<strong>一行记录</strong>的某种锁的对应表的表级锁，有两种：</p>
+<ul>
+<li>意向排它锁（简称 IX 锁）表明一个事务意图在某个表中设置某些行的 X 锁</li>
+<li>意向共享锁（简称 IS 锁）表明一个事务意图在某个表中设置某些行的 S 锁</li>
+</ul>
+<p>兼容速查表如下，其中非意向的X锁和S锁为表级锁：</p>
+<p><img src="/assets/images/mysql/intension-lock-compatible.jpg" alt="MySQL表锁兼容速查"></p>
+<p>一言以敝之，意向锁之间必须走行锁粒度的检查才能知道是否兼容，但在表级兼容检查中都为兼容；其余情况遵循读写锁的规范即可。</p>
+<h3 id="2-1-2-AUTO-INC-Locks-自增锁"><a href="#2-1-2-AUTO-INC-Locks-自增锁" class="headerlink" title="2.1.2 AUTO-INC Locks - 自增锁"></a>2.1.2 AUTO-INC Locks - 自增锁</h3><p>插入自增列时需要获取的表级锁。</p>
+<h2 id="2-2-行锁"><a href="#2-2-行锁" class="headerlink" title="2.2 行锁"></a>2.2 行锁</h2><p><strong>注意：InnoDB的行锁是针对索引加锁。</strong>(InnoDB采用聚簇索引的方式构建，当没有主键时，优先找非空唯一列，如果没有，自动创建一个6字节的自增主键列。)</p>
+<p>此处，请重点关注<strong>Gap Locks</strong>。</p>
+<p><img src="/assets/images/mysql/row-lock.jpg" alt="行锁图示"></p>
+<h3 id="2-2-1-Record-Locks-记录锁"><a href="#2-2-1-Record-Locks-记录锁" class="headerlink" title="2.2.1 Record Locks - 记录锁"></a>2.2.1 Record Locks - 记录锁</h3><p><code>LOCK_REC_NOT_GAP</code></p>
+<p>最简单的情况，只锁定单条记录。</p>
+<h3 id="2-2-2-Gap-Locks-间隙锁"><a href="#2-2-2-Gap-Locks-间隙锁" class="headerlink" title="2.2.2 Gap Locks - 间隙锁"></a>2.2.2 Gap Locks - 间隙锁</h3><p><code>LOCK_GAP</code></p>
+<p>最有意思的情况，锁定索引之间的内容。Gap锁设计的原因在于解决<a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读</a>的问题。</p>
+<p>关键：<strong>对于读取的范围加锁</strong>，且<strong>阻止插入操作</strong>。</p>
+<p>注意：在<code>RC</code>级别下，search和index scans是不使用Gap锁的，只在外键约束和duplicate-key检查时使用。</p>
+<h3 id="2-2-3-Next-Key锁"><a href="#2-2-3-Next-Key锁" class="headerlink" title="2.2.3 Next-Key锁"></a>2.2.3 Next-Key锁</h3><p><code>LOCK_ORDINARY</code></p>
+<p>记录锁 + 记录锁之前的间隙锁的组合。如间隙锁是区间<code>(a, b)</code>，则Next-Key锁是区间<code>(a, b]</code>。</p>
+<h3 id="2-2-4-插入意向锁"><a href="#2-2-4-插入意向锁" class="headerlink" title="2.2.4 插入意向锁"></a>2.2.4 插入意向锁</h3><p><code>LOCK_INSERT_INTENTION</code></p>
+<p>特殊的Gap锁，在插入一行记录之前设置，找到当前插入位置的Gap加锁即可。多个事务如果不是在间隙相同的位置就不用相互等待。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81" target="_blank" rel="noopener">读写锁 - 维基百科</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读 - 百度百科</a></li>
+<li><a href="https://segmentfault.com/a/1190000014071758" target="_blank" rel="noopener">InnoDB 锁 — 官方文档（翻译）</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html" target="_blank" rel="noopener">InnoDB Locking - 官方文档</a></li>
+<li><a href="https://segmentfault.com/a/1190000014133576" target="_blank" rel="noopener">MySQL InnoDB锁机制全面解析分享</a></li>
+<li><a href="https://www.zhihu.com/question/51513268" target="_blank" rel="noopener">InnoDB的意向锁的作用？</a></li>
+<li><a href="http://mysql.taobao.org/monthly/2017/12/02/" target="_blank" rel="noopener">Innodb 锁子系统浅析</a></li>
+<li><a href="http://mysql.taobao.org/monthly/2016/01/01/" target="_blank" rel="noopener">InnoDB 事务锁系统简介</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="//www.hbiboluo.com" target="_blank">01世界</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/01/07/avoid-mysql-deadlock-3/" class="pre-post btn btn-default" title="如何避免MySQL死锁（三）- SQL语句与锁">
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">如何避免MySQL死锁（三）- SQL语句与锁</span>
+        </a>
+    
+    
+        <a href="/2019/01/06/avoid-mysql-deadlock-1/" class="next-post btn btn-default" title="如何避免MySQL死锁（一）- 引子">
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">如何避免MySQL死锁（一）- 引子</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+    
+    <div id="vcomments" class="valine"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'lvxseIkDdXLkr5gixH9GiR1Y-gzGzoHsz',
+            appKey: 'tXjS2byF3lAHkMh5dkLAPMV2',
+            placeholder: '说点什么吧',
+            notify: false,
+            verify: false,
+            avatar: 'mm',
+            meta: 'nick,mail'.split(','),
+            pageSize: '10',
+            path: window.location.pathname,
+            lang: 'zh-CN'.toLowerCase()
+        })
+    </script>
+
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-什么锁"><span class="toc-text">1. 什么锁</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-锁什么"><span class="toc-text">2. 锁什么</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-表锁"><span class="toc-text">2.1 表锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-Intention-Lock-意向锁"><span class="toc-text">2.1.1 Intention Lock - 意向锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-AUTO-INC-Locks-自增锁"><span class="toc-text">2.1.2 AUTO-INC Locks - 自增锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-行锁"><span class="toc-text">2.2 行锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-Record-Locks-记录锁"><span class="toc-text">2.2.1 Record Locks - 记录锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-Gap-Locks-间隙锁"><span class="toc-text">2.2.2 Gap Locks - 间隙锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-Next-Key锁"><span class="toc-text">2.2.3 Next-Key锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-插入意向锁"><span class="toc-text">2.2.4 插入意向锁</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

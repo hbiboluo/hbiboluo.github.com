@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.hbiboluo.com/"/>
-  <updated>2019-01-06T04:24:48.027Z</updated>
+  <updated>2019-01-08T00:53:09.632Z</updated>
   <id>https://www.hbiboluo.com/</id>
   
   <author>
@@ -17,13 +17,65 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>如何避免MySQL死锁（三）- SQL语句与锁</title>
+    <link href="https://www.hbiboluo.com/2019/01/07/avoid-mysql-deadlock-3/"/>
+    <id>https://www.hbiboluo.com/2019/01/07/avoid-mysql-deadlock-3/</id>
+    <published>2019-01-07T15:00:00.000Z</published>
+    <updated>2019-01-08T00:53:09.632Z</updated>
+    
+    <content type="html"><![CDATA[<p>注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论<code>InnoDB</code>引擎。</p><h1 id="两阶段锁协议"><a href="#两阶段锁协议" class="headerlink" title="两阶段锁协议"></a>两阶段锁协议</h1><p>将事务分解成加锁和解锁两个阶段：</p><ol><li>加锁<br>该阶段可以进行加锁操作，在对任何数据进行读操作之前要申请并获得S锁；而在进行写操作之前，需要申请X锁。加锁不成功则进入等待状态，而不能再加其它锁。</li><li>解锁<br>事务进入解锁阶段将释放其持有的锁，该阶段只能进行解锁操作，而不能再加其它锁。</li></ol><h1 id="加锁影响因子"><a href="#加锁影响因子" class="headerlink" title="加锁影响因子"></a>加锁影响因子</h1><p>SQL语句如何加锁主要受以下两个关键要素的影响：</p><ul><li>事务隔离级别</li><li>索引：查询是否走索引？什么类型的索引</li></ul><h1 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h1><p>事务实现了不同的隔离级别，如下：</p><table><thead><tr><th>事务隔离级别</th><th>脏读</th><th>不可重复读</th><th>幻读</th></tr></thead><tbody><tr><td>Read Uncommitted</td><td>是</td><td>是</td><td>是</td></tr><tr><td>Read Committed</td><td>-</td><td>是</td><td>是</td></tr><tr><td>Repeatable Read</td><td>-</td><td>-</td><td>是</td></tr><tr><td>Serializable</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><p>问题解释如下：</p><ul><li>脏读：一个事务处理过程里读取了另一个未提交的事务中的数据。</li><li>不可重复读：对于数据库中的某个数据，一个事务范围内多次查询却返回了不同的数据值，这是由于在查询间隔，被另一个事务修改并提交了。</li><li>幻读：主要是说多次读取一个范围内的记录(包括直接查询所有记录结果或者做聚合统计), 发现结果不一致(标准档案一般指记录增多, 记录的减少应该也算是幻读)。</li></ul><p>特别的，<code>RR</code>可重复读的级别可以部分解决幻读问题：</p><ul><li><code>快照读</code>使用了MVCC, 所以也就避免了部分幻读的出现！「读取后被删除，重新插入之类」</li><li><code>当前读</code>使用了Gap锁，不存在幻读现象</li></ul><p>但是<code>RR</code>无法解决如下情况的幻读：</p><table><thead><tr><th>事务一</th><th>事务二</th></tr></thead><tbody><tr><td>begin</td><td>begin</td></tr><tr><td>select * from demo;</td><td></td></tr><tr><td></td><td>insert into demo(id) values(1);</td></tr><tr><td></td><td>commit;</td></tr><tr><td>select * from demo;</td><td></td></tr><tr><td>insert into demo(id) values(1);</td><td></td></tr><tr><td>查询不到id为1的记录，插入却报错</td></tr></tbody></table><h1 id="如何加锁"><a href="#如何加锁" class="headerlink" title="如何加锁"></a>如何加锁</h1><h2 id="1-Consistent-Reads-–-一致性读、快照读"><a href="#1-Consistent-Reads-–-一致性读、快照读" class="headerlink" title="1. Consistent Reads – 一致性读、快照读"></a>1. Consistent Reads – 一致性读、快照读</h2><ul><li>select … from<ul><li>(<strong>非SERIALIZABLE</strong>) 快照读，不加锁</li><li>(<strong>SERIALIZABLE</strong>) 加锁<ul><li>(unique index) record locks</li><li>(其他) next-key locks</li></ul></li></ul></li></ul><h2 id="2-Locking-Reads-–-当前读"><a href="#2-Locking-Reads-–-当前读" class="headerlink" title="2. Locking Reads – 当前读"></a>2. Locking Reads – 当前读</h2><ul><li>select、update、delete<ul><li>select … for update | select … lock in share mode<ul><li>(<strong>RR</strong>)<ul><li>(unique index) record locks</li><li>(其他) next-key locks</li></ul></li><li>(<strong>其他</strong>) record locks</li></ul></li><li>update … where …(同上)</li><li>delete … where …(同上)</li></ul></li><li>insert<ul><li>insert<ul><li>(<strong>RR</strong>) gap locks</li><li>(<strong>RC</strong>) record locks</li></ul></li><li>insert into T select … from S where …<ul><li>T表的insert锁同<code>insert</code>加锁方式</li><li>S表<ul><li>(<strong>RC</strong> | <strong>SERIALIZABLE(<code>innodb_locks_unsafe_for_binlog</code>开启)</strong>) 快照读，不加锁</li><li>(其他) next-key locks</li></ul></li></ul></li></ul></li></ul><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locks-set.html" target="_blank" rel="noopener">官方文档 - innodb如何加锁</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论&lt;code&gt;InnoDB&lt;/code&gt;引擎。&lt;/p&gt;
+&lt;h1 id=&quot;两阶段锁协议&quot;&gt;&lt;a href=&quot;#两阶段锁协议&quot; class=&quot;headerlink&quot; title=&quot;两阶段锁协议&quot;&gt;&lt;/a&gt;两阶段锁协议
+      
+    
+    </summary>
+    
+      <category term="技术" scheme="https://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="MySQL" scheme="https://www.hbiboluo.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何避免MySQL死锁（二）- MySQL锁</title>
+    <link href="https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-2/"/>
+    <id>https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-2/</id>
+    <published>2019-01-06T07:00:00.000Z</published>
+    <updated>2019-01-08T00:42:43.195Z</updated>
+    
+    <content type="html"><![CDATA[<p>注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论<code>InnoDB</code>引擎。</p><p>MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以分表锁、页锁、行锁；从细节上来讲可以分为记录锁、Gap锁、Next-Key锁、插入意向锁。</p><p>本节，我们从以下两个角度来解析：</p><ol><li>什么锁（重点在于锁的性质）</li><li>锁什么（重点在于锁的粒度）</li></ol><h1 id="1-什么锁"><a href="#1-什么锁" class="headerlink" title="1. 什么锁"></a>1. 什么锁</h1><p>采用了<a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81" target="_blank" rel="noopener">读写锁</a>的设计，区别读、写操作。如下：</p><ul><li>Shared Lock(S)：共享锁，读锁。（允许多个读，写需等待。）</li><li>Exclusive Lock(X)：排他锁，写锁。（唯一许可。）</li></ul><h1 id="2-锁什么"><a href="#2-锁什么" class="headerlink" title="2. 锁什么"></a>2. 锁什么</h1><p>从锁的粒度来看，分为表锁、行锁以及介于两者之间的页锁，由于<code>InnoDB</code>只支持表锁和行锁，以下我们只讨论这两种。</p><h2 id="2-1-表锁"><a href="#2-1-表锁" class="headerlink" title="2.1 表锁"></a>2.1 表锁</h2><h3 id="2-1-1-Intention-Lock-意向锁"><a href="#2-1-1-Intention-Lock-意向锁" class="headerlink" title="2.1.1 Intention Lock - 意向锁"></a>2.1.1 Intention Lock - 意向锁</h3><p>首先要明确的是<strong>意向锁</strong>是表锁，代表了是否设置了表中的行级锁，是为了支持多种粒度锁同时存在而设计。</p><p>假设需要向一个表添加一个表级X锁：</p><ul><li>没有意向锁，则需要遍历所有整个表判断是否有行锁的存在，以免发生冲突；</li><li>有意向锁，则无需遍历，通过查询表锁之间是否互相兼容即可。</li></ul><p>意向锁表明一个事务稍后要获得针对<strong>一行记录</strong>的某种锁的对应表的表级锁，有两种：</p><ul><li>意向排它锁（简称 IX 锁）表明一个事务意图在某个表中设置某些行的 X 锁</li><li>意向共享锁（简称 IS 锁）表明一个事务意图在某个表中设置某些行的 S 锁</li></ul><p>兼容速查表如下，其中非意向的X锁和S锁为表级锁：</p><p><img src="/assets/images/mysql/intension-lock-compatible.jpg" alt="MySQL表锁兼容速查"></p><p>一言以敝之，意向锁之间必须走行锁粒度的检查才能知道是否兼容，但在表级兼容检查中都为兼容；其余情况遵循读写锁的规范即可。</p><h3 id="2-1-2-AUTO-INC-Locks-自增锁"><a href="#2-1-2-AUTO-INC-Locks-自增锁" class="headerlink" title="2.1.2 AUTO-INC Locks - 自增锁"></a>2.1.2 AUTO-INC Locks - 自增锁</h3><p>插入自增列时需要获取的表级锁。</p><h2 id="2-2-行锁"><a href="#2-2-行锁" class="headerlink" title="2.2 行锁"></a>2.2 行锁</h2><p><strong>注意：InnoDB的行锁是针对索引加锁。</strong>(InnoDB采用聚簇索引的方式构建，当没有主键时，优先找非空唯一列，如果没有，自动创建一个6字节的自增主键列。)</p><p>此处，请重点关注<strong>Gap Locks</strong>。</p><p><img src="/assets/images/mysql/row-lock.jpg" alt="行锁图示"></p><h3 id="2-2-1-Record-Locks-记录锁"><a href="#2-2-1-Record-Locks-记录锁" class="headerlink" title="2.2.1 Record Locks - 记录锁"></a>2.2.1 Record Locks - 记录锁</h3><p><code>LOCK_REC_NOT_GAP</code></p><p>最简单的情况，只锁定单条记录。</p><h3 id="2-2-2-Gap-Locks-间隙锁"><a href="#2-2-2-Gap-Locks-间隙锁" class="headerlink" title="2.2.2 Gap Locks - 间隙锁"></a>2.2.2 Gap Locks - 间隙锁</h3><p><code>LOCK_GAP</code></p><p>最有意思的情况，锁定索引之间的内容。Gap锁设计的原因在于解决<a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读</a>的问题。</p><p>关键：<strong>对于读取的范围加锁</strong>，且<strong>阻止插入操作</strong>。</p><p>注意：在<code>RC</code>级别下，search和index scans是不使用Gap锁的，只在外键约束和duplicate-key检查时使用。</p><h3 id="2-2-3-Next-Key锁"><a href="#2-2-3-Next-Key锁" class="headerlink" title="2.2.3 Next-Key锁"></a>2.2.3 Next-Key锁</h3><p><code>LOCK_ORDINARY</code></p><p>记录锁 + 记录锁之前的间隙锁的组合。如间隙锁是区间<code>(a, b)</code>，则Next-Key锁是区间<code>(a, b]</code>。</p><h3 id="2-2-4-插入意向锁"><a href="#2-2-4-插入意向锁" class="headerlink" title="2.2.4 插入意向锁"></a>2.2.4 插入意向锁</h3><p><code>LOCK_INSERT_INTENTION</code></p><p>特殊的Gap锁，在插入一行记录之前设置，找到当前插入位置的Gap加锁即可。多个事务如果不是在间隙相同的位置就不用相互等待。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81" target="_blank" rel="noopener">读写锁 - 维基百科</a></li><li><a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读 - 百度百科</a></li><li><a href="https://segmentfault.com/a/1190000014071758" target="_blank" rel="noopener">InnoDB 锁 — 官方文档（翻译）</a></li><li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html" target="_blank" rel="noopener">InnoDB Locking - 官方文档</a></li><li><a href="https://segmentfault.com/a/1190000014133576" target="_blank" rel="noopener">MySQL InnoDB锁机制全面解析分享</a></li><li><a href="https://www.zhihu.com/question/51513268" target="_blank" rel="noopener">InnoDB的意向锁的作用？</a></li><li><a href="http://mysql.taobao.org/monthly/2017/12/02/" target="_blank" rel="noopener">Innodb 锁子系统浅析</a></li><li><a href="http://mysql.taobao.org/monthly/2016/01/01/" target="_blank" rel="noopener">InnoDB 事务锁系统简介</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论&lt;code&gt;InnoDB&lt;/code&gt;引擎。&lt;/p&gt;
+&lt;p&gt;MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以分表锁、页锁、行锁；从细节上来讲可以分为记录锁、Gap锁、Next-Key锁、插入意向锁。
+      
+    
+    </summary>
+    
+      <category term="技术" scheme="https://www.hbiboluo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="MySQL" scheme="https://www.hbiboluo.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
     <title>如何避免MySQL死锁（一）- 引子</title>
     <link href="https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-1/"/>
     <id>https://www.hbiboluo.com/2019/01/06/avoid-mysql-deadlock-1/</id>
-    <published>2019-01-05T22:00:00.000Z</published>
-    <updated>2019-01-06T04:24:48.027Z</updated>
+    <published>2019-01-06T04:00:00.000Z</published>
+    <updated>2019-01-06T08:36:28.852Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>事情是这样开始的……</p><p>这两天，好友L同学接到新需求，通宵达旦，终于在deadline前顺利上线了。松口气一块约了个饭，话还没聊半晌，leader却来电话了，线上MySQL并发死锁，DBA把日志都发过来了，务必赶紧解决，饭未毕人已凉……</p><p>那如何避免出现MySQL死锁问题呢？于是萌生了写一个系列文章，查缺补漏的同时也总结一下对于MySQL死锁问题的理解。</p><h1 id="哲学家就餐问题"><a href="#哲学家就餐问题" class="headerlink" title="哲学家就餐问题"></a>哲学家就餐问题</h1><p>死锁是在并发场景下产生的，经典的「哲学家就餐问题」很好地抽象了并发过程中的资源竞争情况。</p><p>它可以这样表述，假设有五位哲学家围坐在一张圆形餐桌旁，做以下两件事情之一：吃饭，或者思考。吃东西的时候，他们就停止思考，思考的时候也停止吃东西。每两个哲学家之间有一只筷子。而他们只能使用自己左右手边的那两只筷子。<br><img src="/assets/images/mysql/philosopher.jpg" alt="哲学家就餐问题"></p><p>那么这个模型下的并发问题可以这样描述：</p><ul><li>死锁：每个哲学家都同时拿起左手的筷子，等待另一边的筷子</li><li>活锁：每个哲学家都同时拿起左手的筷子，然后发现拿不到另一边的筷子，于是都放下已拿起的筷子，周而复始……</li><li>饥饿：某个哲学家拿到两边的筷子之后，一直不放，他两边的哲学家就一直处于饥饿状态</li></ul><p>死锁问题模型可以抽象为一个有向图，节点为线程/事务，有向边表示资源/锁的依赖或者等待关系，当图中出现环时，死锁出现。</p><h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>这个系列文章的思路是这样的设计的：</p><ol><li>如何避免MySQL死锁（一）- 引子</li><li>如何避免MySQL死锁（二）- MySQL锁：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li><li>如何避免MySQL死锁（三）- SQL语句与锁：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li><li>如何避免MySQL死锁（四）- 如何阅读MySQL的死锁日志：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li><li>如何避免MySQL死锁（五）- 实例分析：验证与练习</li><li>如何避免MySQL死锁（六）- 解决MySQL死锁的一般原则：总结一些经验</li></ol><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://zh.wikipedia.org/wiki/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">哲学家就餐问题</a></li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>事情是这样开始的……</p><p>这两天，好友L同学接到新需求，通宵达旦，终于在deadline前顺利上线了。松口气一块约了个饭，话还没聊半晌，leader却来电话了，线上MySQL并发死锁，DBA把日志都发过来了，务必赶紧解决，饭未毕人已凉……</p><p>那如何避免出现MySQL死锁问题呢？于是萌生了写一个系列文章，查缺补漏的同时也总结一下对于MySQL死锁问题的理解。</p><h1 id="哲学家就餐问题"><a href="#哲学家就餐问题" class="headerlink" title="哲学家就餐问题"></a>哲学家就餐问题</h1><p>死锁是在并发场景下产生的，经典的「哲学家就餐问题」很好地抽象了并发过程中的资源竞争情况。</p><p>它可以这样表述，假设有五位哲学家围坐在一张圆形餐桌旁，做以下两件事情之一：吃饭，或者思考。吃东西的时候，他们就停止思考，思考的时候也停止吃东西。每两个哲学家之间有一只筷子。而他们只能使用自己左右手边的那两只筷子。<br><img src="/assets/images/mysql/philosopher.jpg" alt="哲学家就餐问题"></p><p>那么这个模型下的并发问题可以这样描述：</p><ul><li>死锁：每个哲学家都同时拿起左手的筷子，等待另一边的筷子</li><li>活锁：每个哲学家都同时拿起左手的筷子，然后发现拿不到另一边的筷子，于是都放下已拿起的筷子，周而复始……</li><li>饥饿：某个哲学家拿到两边的筷子之后，一直不放回，那他两边的哲学家就会一直处于饥饿状态</li></ul><p>死锁问题可以抽象为一个有向图，节点为线程/事务，有向边表示资源/锁的依赖或者等待关系，当图中出现环时，死锁即出现。</p><h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>这个系列文章的思路是这样的设计的：</p><ol><li>如何避免MySQL死锁（一）- 引子</li><li>如何避免MySQL死锁（二）- MySQL锁：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li><li>如何避免MySQL死锁（三）- SQL语句与锁：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li><li>如何避免MySQL死锁（四）- 如何阅读MySQL的死锁日志：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li><li>如何避免MySQL死锁（五）- 实例分析：验证与练习</li><li>如何避免MySQL死锁（六）- 解决MySQL死锁的一般原则：总结一些经验</li></ol><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://zh.wikipedia.org/wiki/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">哲学家就餐问题</a></li></ul>]]></content>
     
     <summary type="html">
     
