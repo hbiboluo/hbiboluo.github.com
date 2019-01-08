@@ -279,25 +279,13 @@
 </ul>
 <h2 id="2-Locking-Reads-–-当前读"><a href="#2-Locking-Reads-–-当前读" class="headerlink" title="2. Locking Reads – 当前读"></a>2. Locking Reads – 当前读</h2><ul>
 <li>select、update、delete<ul>
-<li>select … for update | select … lock in share mode<ul>
-<li>(<strong>RR</strong>)<ul>
-<li>(unique index) record locks</li>
-<li>(其他) next-key locks</li>
-</ul>
-</li>
-<li>(<strong>其他</strong>) record locks</li>
-</ul>
-</li>
-<li>update … where …(同上)</li>
-<li>delete … where …(同上)</li>
+<li>select … for update | select … lock in share mode</li>
+<li>update … where …</li>
+<li>delete … where …</li>
 </ul>
 </li>
 <li>insert<ul>
-<li>insert<ul>
-<li>(<strong>RR</strong>) gap locks</li>
-<li>(<strong>RC</strong>) record locks</li>
-</ul>
-</li>
+<li>insert</li>
 <li>insert into T select … from S where …<ul>
 <li>T表的insert锁同<code>insert</code>加锁方式</li>
 <li>S表<ul>
@@ -312,7 +300,18 @@
 </ul>
 <h1 id="影响要素"><a href="#影响要素" class="headerlink" title="影响要素"></a>影响要素</h1><p>SQL语句如何加锁主要受以下两个关键要素的影响：</p>
 <ul>
-<li>事务隔离级别</li>
+<li>事务隔离级别<ul>
+<li><strong>RR</strong>:<ul>
+<li>针对幻读问题，加<code>Next-Key</code>锁</li>
+<li>如果是能命中的<code>等值查询</code>，聚簇索引和唯一索引只加<code>Record Lock</code></li>
+</ul>
+</li>
+<li><strong>RC</strong>:<ul>
+<li>一般不加<code>Gap</code>锁</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>索引(InnoDB的行级锁锁的是索引)：查询是否走索引？什么类型的索引</li>
 </ul>
 <h2 id="不同索引的加锁方式"><a href="#不同索引的加锁方式" class="headerlink" title="不同索引的加锁方式"></a>不同索引的加锁方式</h2><p><strong>由于MySQL的行锁是针对索引加的锁，不是针对记录加的锁，所以虽然是访问不同行的记录，但是如果是使用相同的索引键，是会出现锁冲突的。</strong></p>
