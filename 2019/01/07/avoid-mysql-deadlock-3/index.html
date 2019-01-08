@@ -266,14 +266,10 @@
 </tr>
 </tbody>
 </table>
-<h1 id="快照读与当前读-理解什么语句会加锁，加什么锁"><a href="#快照读与当前读-理解什么语句会加锁，加什么锁" class="headerlink" title="快照读与当前读 - 理解什么语句会加锁，加什么锁"></a>快照读与当前读 - 理解什么语句会加锁，加什么锁</h1><h2 id="1-Consistent-Reads-–-一致性读、快照读"><a href="#1-Consistent-Reads-–-一致性读、快照读" class="headerlink" title="1. Consistent Reads – 一致性读、快照读"></a>1. Consistent Reads – 一致性读、快照读</h2><ul>
+<h1 id="SQL语句加锁"><a href="#SQL语句加锁" class="headerlink" title="SQL语句加锁"></a>SQL语句加锁</h1><h2 id="1-Consistent-Reads-–-一致性读、快照读"><a href="#1-Consistent-Reads-–-一致性读、快照读" class="headerlink" title="1. Consistent Reads – 一致性读、快照读"></a>1. Consistent Reads – 一致性读、快照读</h2><ul>
 <li>select … from<ul>
 <li>(<strong>非SERIALIZABLE</strong>) 快照读，不加锁</li>
-<li>(<strong>SERIALIZABLE</strong>) 加锁<ul>
-<li>(unique index) record locks</li>
-<li>(其他) next-key locks</li>
-</ul>
-</li>
+<li>(<strong>SERIALIZABLE</strong>) 加锁</li>
 </ul>
 </li>
 </ul>
@@ -417,7 +413,7 @@
     <div class="widget">
         <h3 class="title">文章目录</h3>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#两阶段锁协议"><span class="toc-text">两阶段锁协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务的隔离级别"><span class="toc-text">事务的隔离级别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#快照读与当前读-理解什么语句会加锁，加什么锁"><span class="toc-text">快照读与当前读 - 理解什么语句会加锁，加什么锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Consistent-Reads-–-一致性读、快照读"><span class="toc-text">1. Consistent Reads – 一致性读、快照读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Locking-Reads-–-当前读"><span class="toc-text">2. Locking Reads – 当前读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#影响要素"><span class="toc-text">影响要素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不同索引的加锁方式"><span class="toc-text">不同索引的加锁方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL操作的执行流程"><span class="toc-text">SQL操作的执行流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#两阶段锁协议"><span class="toc-text">两阶段锁协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务的隔离级别"><span class="toc-text">事务的隔离级别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL语句加锁"><span class="toc-text">SQL语句加锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Consistent-Reads-–-一致性读、快照读"><span class="toc-text">1. Consistent Reads – 一致性读、快照读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Locking-Reads-–-当前读"><span class="toc-text">2. Locking Reads – 当前读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#影响要素"><span class="toc-text">影响要素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不同索引的加锁方式"><span class="toc-text">不同索引的加锁方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL操作的执行流程"><span class="toc-text">SQL操作的执行流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
         
     </div>
 </aside>
