@@ -274,23 +274,20 @@
 </li>
 </ul>
 <h2 id="2-Locking-Reads-–-当前读"><a href="#2-Locking-Reads-–-当前读" class="headerlink" title="2. Locking Reads – 当前读"></a>2. Locking Reads – 当前读</h2><ul>
-<li>select、update、delete<ul>
-<li>select … for update | select … lock in share mode</li>
-<li>update … where …</li>
-<li>delete … where …</li>
-</ul>
-</li>
-<li>insert<ul>
-<li>insert</li>
-<li>insert into T select … from S where …<ul>
-<li>T表的insert锁同<code>insert</code>加锁方式</li>
-<li>S表<ul>
-<li>(<strong>RC</strong> | <strong>SERIALIZABLE(<code>innodb_locks_unsafe_for_binlog</code>开启)</strong>) 快照读，不加锁</li>
-<li>(其他) next-key locks</li>
+<li>delete语句(<strong>RC</strong>情况下没有GAP锁)<ul>
+<li>不存在，GAP锁</li>
+<li>记录存在有删除标记，NK锁</li>
+<li>记录存在<ul>
+<li>非唯一索引：NK锁</li>
+<li>唯一索引：REC锁</li>
 </ul>
 </li>
 </ul>
 </li>
+<li>update同delete</li>
+<li>insert语句<ul>
+<li>插入意向锁(特殊的GAP锁)</li>
+<li>特别的唯一键：要先做唯一键校验 - NK共享锁</li>
 </ul>
 </li>
 </ul>
@@ -298,49 +295,25 @@
 <ul>
 <li>事务隔离级别<ul>
 <li><strong>RR</strong>:<ul>
-<li>针对幻读问题，加<code>Next-Key</code>锁</li>
-<li>如果是能命中的<code>等值查询</code>，聚簇索引和唯一索引只加<code>Record Lock</code></li>
+<li>针对幻读问题，加NK锁</li>
+<li>如果是能命中的<code>等值查询</code>，聚簇索引和唯一索引只加REC锁</li>
 </ul>
 </li>
 <li><strong>RC</strong>:<ul>
-<li>一般不加<code>Gap</code>锁</li>
+<li>一般不加Gap锁</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>索引(InnoDB的行级锁锁的是索引)：查询是否走索引？什么类型的索引</li>
+<li>索引(InnoDB的行级锁锁的是索引)：查询是否走索引？什么类型的索引<ul>
+<li><strong>正常情况下，如果查询使用的是辅助索引，会同时在满足条件的聚簇索引项上加上REC锁。</strong></li>
 </ul>
-<h2 id="不同索引的加锁方式"><a href="#不同索引的加锁方式" class="headerlink" title="不同索引的加锁方式"></a>不同索引的加锁方式</h2><p><strong>由于MySQL的行锁是针对索引加的锁，不是针对记录加的锁，所以虽然是访问不同行的记录，但是如果是使用相同的索引键，是会出现锁冲突的。</strong></p>
-<p>以下情况按<code>RR</code>事务级别索引举例，简单了解不同索引的不同加锁方式：</p>
-<table>
-<thead>
-<tr>
-<th>查询使用索引</th>
-<th>锁内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>聚簇索引</td>
-<td>聚簇索引 + Lock</td>
-</tr>
-<tr>
-<td>唯一索引</td>
-<td>辅助索引 + Lock；聚簇索引 + Record Lock；</td>
-</tr>
-<tr>
-<td>普通索引</td>
-<td>辅助索引 + Next-Key Lock；聚簇索引 + Record Lock；</td>
-</tr>
-<tr>
-<td>无索引</td>
-<td>聚簇索引全表 + Next-Key Lock</td>
-</tr>
-</tbody>
-</table>
+</li>
+</ul>
 <h1 id="SQL操作的执行流程"><a href="#SQL操作的执行流程" class="headerlink" title="SQL操作的执行流程"></a>SQL操作的执行流程</h1><p><strong>InnoDB与MySQL是逐条交互，逐条加锁</strong>:</p>
 <ul>
-<li>根据where条件，读取第一条满足条件的记录，返回并加锁，<code>Current Read</code>；</li>
+<li>根据where条件，读取第一条满足条件的记录；</li>
+<li>返回并加锁，<code>Current Read</code>；</li>
 <li>加锁后发起update/delete之类的操作<ul>
 <li>insert操作可能会触发Unique Key的冲突检查，也会进行<code>Current Read</code>;</li>
 </ul>
@@ -350,6 +323,7 @@
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-locks-set.html" target="_blank" rel="noopener">官方文档 - innodb如何加锁</a></li>
 <li><a href="http://hedengcheng.com/?p=771" target="_blank" rel="noopener">何登成 - MySQL加锁处理分析</a></li>
+<li><a href="http://www.fordba.com/lock-analyse-of-delete.html" target="_blank" rel="noopener">MySQL DELETE 删除语句加锁分析</a></li>
 </ul>
 
     </div>
@@ -419,7 +393,7 @@
     <div class="widget">
         <h3 class="title">文章目录</h3>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#两阶段锁协议"><span class="toc-text">两阶段锁协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务的隔离级别"><span class="toc-text">事务的隔离级别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL语句加锁"><span class="toc-text">SQL语句加锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Consistent-Reads-–-一致性读、快照读"><span class="toc-text">1. Consistent Reads – 一致性读、快照读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Locking-Reads-–-当前读"><span class="toc-text">2. Locking Reads – 当前读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#影响要素"><span class="toc-text">影响要素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不同索引的加锁方式"><span class="toc-text">不同索引的加锁方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL操作的执行流程"><span class="toc-text">SQL操作的执行流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基础"><span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#两阶段锁协议"><span class="toc-text">两阶段锁协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务的隔离级别"><span class="toc-text">事务的隔离级别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL语句加锁"><span class="toc-text">SQL语句加锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Consistent-Reads-–-一致性读、快照读"><span class="toc-text">1. Consistent Reads – 一致性读、快照读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Locking-Reads-–-当前读"><span class="toc-text">2. Locking Reads – 当前读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#影响要素"><span class="toc-text">影响要素</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL操作的执行流程"><span class="toc-text">SQL操作的执行流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
         
     </div>
 </aside>

@@ -204,15 +204,19 @@
 <h2 id="2-2-行锁"><a href="#2-2-行锁" class="headerlink" title="2.2 行锁"></a>2.2 行锁</h2><p><strong>注意：InnoDB的行锁是针对索引加锁。</strong>(InnoDB采用聚簇索引的方式构建，当没有主键时，优先找非空唯一列，如果没有，自动创建一个6字节的自增主键列。)</p>
 <p>此处，请重点关注<strong>Gap Locks</strong>。</p>
 <p><img src="/assets/images/mysql/row-lock.jpg" alt="行锁图示"></p>
-<h3 id="2-2-1-Record-Locks-记录锁"><a href="#2-2-1-Record-Locks-记录锁" class="headerlink" title="2.2.1 Record Locks - 记录锁"></a>2.2.1 Record Locks - 记录锁</h3><p><code>LOCK_REC_NOT_GAP</code></p>
+<h3 id="2-2-1-Record-Locks-记录锁"><a href="#2-2-1-Record-Locks-记录锁" class="headerlink" title="2.2.1 Record Locks - 记录锁"></a>2.2.1 Record Locks - 记录锁</h3><p><code>LOCK_REC_NOT_GAP</code>，后文统称<code>REC锁</code>。</p>
 <p>最简单的情况，只锁定单条记录。</p>
-<h3 id="2-2-2-Gap-Locks-间隙锁"><a href="#2-2-2-Gap-Locks-间隙锁" class="headerlink" title="2.2.2 Gap Locks - 间隙锁"></a>2.2.2 Gap Locks - 间隙锁</h3><p><code>LOCK_GAP</code></p>
+<h3 id="2-2-2-Gap-Locks-间隙锁"><a href="#2-2-2-Gap-Locks-间隙锁" class="headerlink" title="2.2.2 Gap Locks - 间隙锁"></a>2.2.2 Gap Locks - 间隙锁</h3><p><code>LOCK_GAP</code>，后文统称<code>GAP锁</code>。</p>
 <p>最有意思的情况，锁定索引之间的内容。Gap锁设计的原因在于解决<a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读</a>的问题。</p>
-<p>关键：<strong>对于读取的范围加锁</strong>，且<strong>阻止插入操作</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">关键：**对于读取的范围加锁**，且**阻止插入操作**。</span><br><span class="line">- Gap锁不论S或X锁都可以互相兼容，可以同时持有</span><br><span class="line">- Gap锁只阻止插入，即插入意向锁！</span><br></pre></td></tr></table></figure>
+<p><a href="https://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html#innodb-gap-locks" target="_blank" rel="noopener">MySQL官方关于Gap锁的解释</a>:</p>
+<blockquote>
+<p>Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from inserting to the gap.<br>Gap locks can co-exist. A gap lock taken by one transaction does not prevent another transaction from taking a gap lock on the same gap. There is no difference between shared and exclusive gap locks. They do not conflict with each other, and they perform the same function.</p>
+</blockquote>
 <p>注意：在<code>RC</code>级别下，search和index scans是不使用Gap锁的，只在外键约束和duplicate-key检查时使用。</p>
-<h3 id="2-2-3-Next-Key锁"><a href="#2-2-3-Next-Key锁" class="headerlink" title="2.2.3 Next-Key锁"></a>2.2.3 Next-Key锁</h3><p><code>LOCK_ORDINARY</code></p>
-<p>记录锁 + 记录锁之前的间隙锁的组合。如间隙锁是区间<code>(a, b)</code>，则Next-Key锁是区间<code>(a, b]</code>。</p>
-<h3 id="2-2-4-插入意向锁"><a href="#2-2-4-插入意向锁" class="headerlink" title="2.2.4 插入意向锁"></a>2.2.4 插入意向锁</h3><p><code>LOCK_INSERT_INTENTION</code></p>
+<h3 id="2-2-3-Next-Key锁"><a href="#2-2-3-Next-Key锁" class="headerlink" title="2.2.3 Next-Key锁"></a>2.2.3 Next-Key锁</h3><p><code>LOCK_ORDINARY</code>，后文统称<code>NK锁</code>。</p>
+<p>REC锁 + 其之前的GAP锁的组合。如GAP锁是区间<code>(a, b)</code>，则NK锁是区间<code>(a, b]</code>。</p>
+<h3 id="2-2-4-插入意向锁"><a href="#2-2-4-插入意向锁" class="headerlink" title="2.2.4 插入意向锁"></a>2.2.4 插入意向锁</h3><p><code>LOCK_INSERT_INTENTION</code>，后文统称<code>插入意向锁</code>。</p>
 <p>特殊的Gap锁，在插入一行记录之前设置，找到当前插入位置的Gap加锁即可。多个事务如果不是在间隙相同的位置就不用相互等待。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81" target="_blank" rel="noopener">读写锁 - 维基百科</a></li>
