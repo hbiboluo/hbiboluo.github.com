@@ -40,8 +40,6 @@
     
 
 
-    <link rel="stylesheet" href="//imsun.github.io/gitment/style/default.css">
-
 
 <link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7">
 <link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.5.0">
@@ -246,20 +244,24 @@
 
     <div id="comments">
         
-	<script type="text/javascript" src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-    var gitment = new Gitment({
-        id: window.location.pathname,
-        owner:"hbiboluo",
-        repo:"hbiboluo.github.io",
-        oauth: {
-          client_id:"00fde589d7902af95c1f",
-          client_secret:"269054101f72ca79851d21dc904e01776b7a122b"
-        },
-        perPage:"10",
-    });
-    gitment.render('comments');
+	
+  <script id="dsq-count-scr" src="https://ni-shui-xing-zhou.disqus.com/count.js" async></script>
+
+
+<script type="text/javascript">
+  var disqus_config = function () {
+    this.page.url = 'https://www.hbiboluo.com/2018/12/15/productivity/';
+    this.page.identifier = '2018/12/15/productivity/';
+    this.page.title = '程序猿利器推荐';
+  };
+  var d = document, s = d.createElement('script');
+  s.src = 'https://ni-shui-xing-zhou.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', '' + +new Date());
+  (d.head || d.body).appendChild(s);
 </script>
+
+
+
 
     </div>
 
