@@ -234,7 +234,13 @@
 <p>最简单的情况，只锁定单条记录。</p>
 <h3 id="2-2-2-Gap-Locks-间隙锁"><a href="#2-2-2-Gap-Locks-间隙锁" class="headerlink" title="2.2.2 Gap Locks - 间隙锁"></a>2.2.2 Gap Locks - 间隙锁</h3><p><code>LOCK_GAP</code>，后文统称<code>GAP锁</code>。</p>
 <p>最有意思的情况，锁定索引之间的内容。Gap锁设计的原因在于解决<a href="https://baike.baidu.com/item/%E5%B9%BB%E8%AF%BB" target="_blank" rel="noopener">幻读</a>的问题。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">关键：**对于读取的范围加锁**，且**阻止插入操作**。</span><br><span class="line">- Gap锁不论S或X锁都可以互相兼容，可以同时持有</span><br><span class="line">- Gap锁只阻止插入，即插入意向锁！</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关键：<strong>对于读取的范围加锁</strong>，且<strong>阻止插入操作</strong>。</p>
+<ul>
+<li>Gap锁不论S或X锁都可以互相兼容，可以同时持有</li>
+<li>Gap锁只阻止插入，即插入意向锁！</li>
+</ul>
+</blockquote>
 <p><a href="https://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html#innodb-gap-locks" target="_blank" rel="noopener">MySQL官方关于Gap锁的解释</a>:</p>
 <blockquote>
 <p>Gap locks in InnoDB are “purely inhibitive”, which means that their only purpose is to prevent other transactions from inserting to the gap.<br>Gap locks can co-exist. A gap lock taken by one transaction does not prevent another transaction from taking a gap lock on the same gap. There is no difference between shared and exclusive gap locks. They do not conflict with each other, and they perform the same function.</p>
