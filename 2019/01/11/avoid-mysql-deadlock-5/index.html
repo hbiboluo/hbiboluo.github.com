@@ -163,6 +163,10 @@
                         MySQL
                     </a>
                 
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
             
         </span>
     </span>
@@ -184,6 +188,14 @@
     
     <div class="post-body post-content">
         <p>注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论<code>InnoDB</code>引擎。</p>
+<ol>
+<li><a href="/2019/01/06/avoid-mysql-deadlock-1/">如何避免MySQL死锁（一）- 引子</a></li>
+<li><a href="/2019/01/06/avoid-mysql-deadlock-2/">如何避免MySQL死锁（二）- MySQL锁</a></li>
+<li><a href="/2019/01/07/avoid-mysql-deadlock-3/">如何避免MySQL死锁（三）- SQL语句与锁</a></li>
+<li><a href="/2019/01/08/avoid-mysql-deadlock-4/">如何避免MySQL死锁（四）- 阅读死锁日志</a></li>
+<li><a href="/2019/01/11/avoid-mysql-deadlock-5/">如何避免MySQL死锁（五）- 实例分析</a></li>
+</ol>
+<hr>
 <h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>新建表结构:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`user`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</span><br><span class="line">  <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`U_name`</span>(<span class="string">`name`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> AUTO_INCREMENT=<span class="number">6</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure></p>
 <p>插入数据：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span>(<span class="keyword">id</span>, <span class="keyword">name</span>) <span class="keyword">values</span></span><br><span class="line">  (<span class="number">1</span>, <span class="string">'One'</span>),</span><br><span class="line">  (<span class="number">2</span>, <span class="string">'Two'</span>),</span><br><span class="line">  (<span class="number">3</span>, <span class="string">'Three'</span>),</span><br><span class="line">  (<span class="number">5</span>, <span class="string">'Five'</span>);</span><br></pre></td></tr></table></figure></p>
 <p>注意模拟之后，<code>rollback</code>回滚事务。</p>

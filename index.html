@@ -161,7 +161,11 @@
         <p class="brief">
             
                 注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
-准备新建表结构:123456CREATE TABLE `user` (  `id` int(11) unsigned NOT NULL AUTO_IN...
+
+如何避免MySQL死锁（一）- 引子
+如何避免MySQL死锁（二）- MySQL锁
+如何避免MySQL死锁（三）- SQL语句与锁
+如何避免MySQ...
             
         </p>
     </div>
@@ -187,6 +191,10 @@
                 
                     <a href="/tags/MySQL" title="MySQL">
                         MySQL
+                    </a>
+                
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
                     </a>
                 
             
@@ -229,21 +237,11 @@
         <p class="brief">
             
                 注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
-死锁日志死锁剧本，默认RR级别：
 
-
-
-事务1
-事务2
-
-
-
-
-start transaction;
-start transaction;
-
-
-upd...
+如何避免MySQL死锁（一）- 引子
+如何避免MySQL死锁（二）- MySQL锁
+如何避免MySQL死锁（三）- SQL语句与锁
+如何避免MySQ...
             
         </p>
     </div>
@@ -269,6 +267,14 @@ upd...
                 
                     <a href="/tags/MySQL" title="MySQL">
                         MySQL
+                    </a>
+                
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
+                    <a href="/tags/运维" title="运维">
+                        运维
                     </a>
                 
             
@@ -311,9 +317,11 @@ upd...
         <p class="brief">
             
                 注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
-基础两阶段锁协议将事务分解成加锁和解锁两个阶段：
 
-加锁该阶段可以进行加锁操作，在对任何数据进行读操作之前要申请并获得S锁；而在进行写操作之前，需要申...
+如何避免MySQL死锁（一）- 引子
+如何避免MySQL死锁（二）- MySQL锁
+如何避免MySQL死锁（三）- SQL语句与锁
+如何避免MySQ...
             
         </p>
     </div>
@@ -339,6 +347,14 @@ upd...
                 
                     <a href="/tags/MySQL" title="MySQL">
                         MySQL
+                    </a>
+                
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
+                    <a href="/tags/事务" title="事务">
+                        事务
                     </a>
                 
             
@@ -381,7 +397,11 @@ upd...
         <p class="brief">
             
                 注意：MySQL不同的存储引擎内部有不同的实现，本系列文章仅讨论InnoDB引擎。
-MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以分表锁、页锁、行锁；从细节上来讲可以分为记录锁、Gap锁、Next-Key锁、插入意向锁。...
+
+如何避免MySQL死锁（一）- 引子
+如何避免MySQL死锁（二）- MySQL锁
+如何避免MySQL死锁（三）- SQL语句与锁
+如何避免MySQ...
             
         </p>
     </div>
@@ -407,6 +427,14 @@ MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以
                 
                     <a href="/tags/MySQL" title="MySQL">
                         MySQL
+                    </a>
+                
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
+                    <a href="/tags/锁" title="锁">
+                        锁
                     </a>
                 
             
@@ -475,6 +503,14 @@ MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以
                 
                     <a href="/tags/MySQL" title="MySQL">
                         MySQL
+                    </a>
+                
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
+                    <a href="/tags/哲学家就餐" title="哲学家就餐">
+                        哲学家就餐
                     </a>
                 
             
@@ -645,7 +681,7 @@ MySQL的锁，从性质来讲可以分为读锁、写锁；从粒度来讲可以
     <div class="content tag-cloud">
         
             <canvas width="300" height="300" id="tag-cloud-3d">
-                <a href="/tags/MySQL/" style="font-size: 20px;">MySQL</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/效率/" style="font-size: 10px;">效率</a>
+                <a href="/tags/MySQL/" style="font-size: 20px;">MySQL</a> <a href="/tags/事务/" style="font-size: 10px;">事务</a> <a href="/tags/哲学家就餐/" style="font-size: 10px;">哲学家就餐</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/效率/" style="font-size: 10px;">效率</a> <a href="/tags/死锁/" style="font-size: 20px;">死锁</a> <a href="/tags/运维/" style="font-size: 10px;">运维</a> <a href="/tags/锁/" style="font-size: 10px;">锁</a>
             </canvas>
         
     </div>

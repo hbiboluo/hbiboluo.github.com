@@ -163,6 +163,14 @@
                         MySQL
                     </a>
                 
+                    <a href="/tags/死锁" title="死锁">
+                        死锁
+                    </a>
+                
+                    <a href="/tags/哲学家就餐" title="哲学家就餐">
+                        哲学家就餐
+                    </a>
+                
             
         </span>
     </span>
@@ -197,11 +205,11 @@
 <p>死锁问题可以抽象为一个有向图，节点为线程/事务，有向边表示资源/锁的依赖或者等待关系，当图中出现环时，死锁即出现。</p>
 <h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>这个系列文章的思路是这样的设计的：</p>
 <ol>
-<li>如何避免MySQL死锁（一）- 引子</li>
-<li>如何避免MySQL死锁（二）- MySQL锁：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li>
-<li>如何避免MySQL死锁（三）- SQL语句与锁：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li>
-<li>如何避免MySQL死锁（四）- 如何阅读MySQL的死锁日志：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li>
-<li>如何避免MySQL死锁（五）- 实例分析：总结、验证</li>
+<li><a href="/2019/01/06/avoid-mysql-deadlock-1/">如何避免MySQL死锁（一）- 引子</a></li>
+<li><a href="/2019/01/06/avoid-mysql-deadlock-2/">如何避免MySQL死锁（二）- MySQL锁</a>：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li>
+<li><a href="/2019/01/07/avoid-mysql-deadlock-3/">如何避免MySQL死锁（三）- SQL语句与锁</a>：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li>
+<li><a href="/2019/01/08/avoid-mysql-deadlock-4/">如何避免MySQL死锁（四）- 阅读死锁日志</a>：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li>
+<li><a href="/2019/01/11/avoid-mysql-deadlock-5/">如何避免MySQL死锁（五）- 实例分析</a>：实例分析、总结</li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://zh.wikipedia.org/wiki/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">哲学家就餐问题</a></li>
