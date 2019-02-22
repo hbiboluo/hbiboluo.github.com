@@ -3,6 +3,31 @@
   
     
     <entry>
+      <title>短评《如何阅读一本书》</title>
+      <link href="/2019/02/21/how_to_read_a_book/"/>
+      <url>/2019/02/21/how_to_read_a_book/</url>
+      
+        <content type="html"><![CDATA[<p><img src="/assets/img/reading.jpg" alt="如何阅读一本书"></p><p>简单总结《如何阅读一本书》中目前个人理解的要点。</p><h1 id="主动阅读"><a href="#主动阅读" class="headerlink" title="主动阅读"></a>主动阅读</h1><h2 id="共识"><a href="#共识" class="headerlink" title="共识"></a>共识</h2><ul><li>书的金字塔原则：好书是有限的，知无涯而生有涯<ul><li>聚焦在少数真正有提升的书籍</li><li>花合适的成本去阅读对应书籍</li><li>有必要在限定时间内了解一本书是否值得花更多时间、精力去研习</li></ul></li></ul><h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><ul><li>阅读目标：学习、提升</li><li>阅读过程：从文字中理解作者想表达的的思想：主题、思路框架、主旨及论点……<ul><li>越是与目前能力有差距的书，越要付出更多的时间、精力以及理解力。</li><li>合理的期望：提升大的书，需要逐次逐步阅读。</li><li>避免口语主义：反模式是记住了原话，而没有理解真义。所以最好的方式是<strong>用自己的话来表达</strong>！</li></ul></li><li>阅读成果：阅读目标的答卷<ul><li>学以致用</li><li>知行合一，深知深行，浅知浅行，不知不行</li></ul></li></ul><h1 id="阅读方法"><a href="#阅读方法" class="headerlink" title="阅读方法"></a>阅读方法</h1><p>这些方法是为指导我们阅读时要达成的小目标，也是作者理想的最佳实践。</p><p>完全遵循书中的规则偏理想，可以把它们看成是否完成该层次阅读的验收标准。</p><h2 id="检视阅读"><a href="#检视阅读" class="headerlink" title="检视阅读"></a>检视阅读</h2><ul><li>重点：限时！</li><li>目标：了解主题、框架以及主要解决问题，以及是否有价值花更多时间做更完整的阅读。</li><li>要点：<ul><li>SOP：系统性略读</li><li>粗浅的阅读：在限定时间内，安排好时间、精力快速读完一遍<ul><li>特别是在难懂的地方不要停下来，在价值不大的地方不要做太多投入</li><li>特别要注意找到作者自己的总结，一般在首章或末章</li></ul></li></ul></li></ul><h2 id="分析阅读"><a href="#分析阅读" class="headerlink" title="分析阅读"></a>分析阅读</h2><p>完成以下内容：</p><ul><li>书内<ul><li>框架性 - 透视一本书</li><li>内容性 - 诠释一本书</li></ul></li><li>书外<ul><li>平等性 - 评断一本书</li></ul></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 读书 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 阅读 </tag>
+            
+            <tag> 读书笔记 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>如何避免MySQL死锁（五）- 实例分析</title>
       <link href="/2019/01/11/avoid-mysql-deadlock-5/"/>
       <url>/2019/01/11/avoid-mysql-deadlock-5/</url>
