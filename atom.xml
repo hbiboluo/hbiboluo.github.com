@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.hbiboluo.com/"/>
-  <updated>2019-02-22T00:57:34.354Z</updated>
+  <updated>2019-05-05T14:19:35.697Z</updated>
   <id>https://www.hbiboluo.com/</id>
   
   <author>
@@ -15,6 +15,61 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>读书笔记《金字塔原理》</title>
+    <link href="https://www.hbiboluo.com/2019/04/24/pyramid_principle/"/>
+    <id>https://www.hbiboluo.com/2019/04/24/pyramid_principle/</id>
+    <published>2019-04-23T16:00:00.000Z</published>
+    <updated>2019-05-05T14:19:35.697Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="0、总述：场景-x-结构"><a href="#0、总述：场景-x-结构" class="headerlink" title="0、总述：场景 x 结构"></a>0、总述：场景 x 结构</h1><p>工作生活中处处都有着场景：表达、提问、思考、解决问题、排兵布阵……</p><p>当其内在没有一个结构来支撑时，往往让人感觉无重点、无逻辑，个人感觉本书的中心是：<strong>给场景赋予结构</strong></p><p><strong>场景 x 结构</strong>的意思是场景与结构中做迪卡尔积，不同场景更适合的结构是不同的，可以想象一个二维表，场景和结构的交叉处是其适用程度的得分。</p><p>另外，<code>结构</code>本身并不是单一结构，可以是复合的。</p><p>本书，从「金字塔」结构进行论述，并且不同的应用场景各有其不同特点。</p><h1 id="1、原理：结构-金字塔"><a href="#1、原理：结构-金字塔" class="headerlink" title="1、原理：结构 - 金字塔"></a>1、原理：结构 - 金字塔</h1><p><img src="/assets/images/pyramid_head.jpg" alt="总纲"><br>五人为伍，二伍为什。</p><h2 id="1-1-金字塔-树"><a href="#1-1-金字塔-树" class="headerlink" title="1.1 金字塔 - 树"></a>1.1 金字塔 - 树</h2><p>树结构对于各个节点延伸出了两个维度的信息：</p><ul><li>纵向<ul><li>关系<ul><li>上统下：总结概括、疑问/回答</li></ul></li></ul></li><li>横向<ul><li>关系<ul><li>同一逻辑范畴</li><li>逻辑顺序排列「时间、结构、程度」</li></ul></li><li>原则<ul><li>MECE原则「互相独立、彼此穷尽」</li></ul></li></ul></li></ul><h2 id="1-2-如何构建"><a href="#1-2-如何构建" class="headerlink" title="1.2 如何构建"></a>1.2 如何构建</h2><ul><li>自上而下</li><li>自下而上</li></ul><h1 id="2、应用：场景-表达-写作-、思考、解决问题、演示"><a href="#2、应用：场景-表达-写作-、思考、解决问题、演示" class="headerlink" title="2、应用：场景 - 表达(写作)、思考、解决问题、演示"></a>2、应用：场景 - 表达(写作)、思考、解决问题、演示</h1><h2 id="2-1-表达-amp-演示"><a href="#2-1-表达-amp-演示" class="headerlink" title="2.1 表达 &amp; 演示"></a>2.1 表达 &amp; 演示</h2><p>此处把表达以及演示合并，共同点都在于是双向过程，在于以受众（听众、读者、观众等）为中心。</p><ul><li>目标<ul><li>吸引/保持受众注意力</li><li>减少受众的接受难度</li></ul></li><li>策略<ul><li>表达：序言（背景、冲突、疑问、答案）、结论先行、</li><li>演示：写好PPT，避免视觉朗诵……</li></ul></li></ul><h2 id="2-2-思考"><a href="#2-2-思考" class="headerlink" title="2.2 思考"></a>2.2 思考</h2><p><em>避免罗列、概括各组真义。</em></p><h2 id="2-3-解决问题"><a href="#2-3-解决问题" class="headerlink" title="2.3 解决问题"></a>2.3 解决问题</h2><p>务必从问题出发：</p><ul><li>界定问题「可映射到表达里的序言」<ul><li>diff(现状, 目标)</li></ul></li><li>结构化分析 <ul><li>四步曲<ul><li>收集信息「收集发生在界定问题之后！」</li><li>描述发现</li><li>得出结论</li><li>提出方案</li></ul></li></ul></li></ul><h1 id="3、延伸"><a href="#3、延伸" class="headerlink" title="3、延伸"></a>3、延伸</h1><h2 id="3-1-结构延伸"><a href="#3-1-结构延伸" class="headerlink" title="3.1 结构延伸"></a>3.1 结构延伸</h2><ul><li>图，从结构上来说比树更自由，可完成任意节点间的关联<ul><li>结构「过于自由的模型，可以归纳为滥用反而事倍功半」<ul><li>节点</li><li>连接<ul><li>有向（单向、双向） – 更多信息</li></ul></li><li>隐式<ul><li>兄弟关系「并列」– 不如树直观</li></ul></li></ul></li><li>典型结构<ul><li>流程图</li><li>图形结构<ul><li>三角</li><li>矩形</li><li>五星</li><li>雁形</li></ul></li><li>……</li></ul></li></ul></li></ul><h2 id="3-2-应用延伸"><a href="#3-2-应用延伸" class="headerlink" title="3.2 应用延伸"></a>3.2 应用延伸</h2><ul><li>流程图应用</li><li>组织架构</li><li>……</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;0、总述：场景-x-结构&quot;&gt;&lt;a href=&quot;#0、总述：场景-x-结构&quot; class=&quot;headerlink&quot; title=&quot;0、总述：场景 x 结构&quot;&gt;&lt;/a&gt;0、总述：场景 x 结构&lt;/h1&gt;&lt;p&gt;工作生活中处处都有着场景：表达、提问、思考、解决问题、排兵布
+      
+    
+    </summary>
+    
+      <category term="读书" scheme="https://www.hbiboluo.com/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    
+      <category term="读书笔记" scheme="https://www.hbiboluo.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="思维" scheme="https://www.hbiboluo.com/tags/%E6%80%9D%E7%BB%B4/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>读书笔记《格鲁夫给经理人的第一课》</title>
+    <link href="https://www.hbiboluo.com/2019/03/21/high_output_management/"/>
+    <id>https://www.hbiboluo.com/2019/03/21/high_output_management/</id>
+    <published>2019-03-20T16:00:00.000Z</published>
+    <updated>2019-05-05T14:00:47.373Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="/assets/images/high_output_management/main.png" alt="总纲"></p><h1 id="1、产出导向管理"><a href="#1、产出导向管理" class="headerlink" title="1、产出导向管理"></a>1、产出导向管理</h1><p>以产出为导向的管理，不论是组织管理还是个人管理。特别明确作为一个经理人，其产出是：</p><blockquote><p>一个经理人的产出，便是他所管理或影响所及的部属工作的成效总和。</p></blockquote><h1 id="2、经理人"><a href="#2、经理人" class="headerlink" title="2、经理人"></a>2、经理人</h1><h2 id="2-1-核心公式"><a href="#2-1-核心公式" class="headerlink" title="2.1 核心公式"></a>2.1 核心公式</h2><blockquote><p>经理人的产出 = 组织产出的总和 = 杠杆率A×管理活动A＋杠杆率B×管理活动B……</p><p>在这个等式中，经理人所从事的每一项管理活动（管理活动A、B……）对整个组织都有或多或少的影响。而对整个产出的影响有多大，则在于这项活动的杠杆率大小。一个经理人的产出便是这些乘积的加总。显而易见，为了有较高的产出，经理人应该把精力放在杠杆率较高的活动上。</p><p>经理人的生产力亦即其每个单位时间的产出，可通过以下3种方法来增加：</p><ol><li>加快每一项活动进行的速度。</li><li>提高每一项活动的杠杆率。</li><li>调整管理活动的组合，摒除低杠杆率的活动，代之以高杠杆率的活动。</li></ol></blockquote><p><strong>大都人都知道「要事第一」的原则，而困难的事情是识别什么是「要事」，经理人的产出公式恰恰指明了如何来识别要事。</strong></p><h3 id="2-1-1-杠杆率「提升每项活动的杠杆率」"><a href="#2-1-1-杠杆率「提升每项活动的杠杆率」" class="headerlink" title="2.1.1 杠杆率「提升每项活动的杠杆率」"></a>2.1.1 杠杆率「提升每项活动的杠杆率」</h3><p>杠杆率：定义为对于产出的影响力。特别要注意，杠杆率可能为负。「个人定义：活动的产出」</p><p>确定了活动组合，不同的执行人收获的却是不同的产出，核心就在于对于每项活动，执行人带来的成果。如何提升杠杆率，避免负向作用？书中谈到高杠杆率主要是影响更多的人、产生更长远的影响。尝试抽象一下：</p><ul><li>影响面「k, 累加」：对多少人产生直接/间接的影响。</li><li>影响度「x, 每个个体不一」：对一个人产生多大的影响，正向还是负向。</li></ul><p><code>杠杆率 = Sum(Xi)</code></p><h3 id="2-1-2-成本「加快活动速度，即是减小成本投入」"><a href="#2-1-2-成本「加快活动速度，即是减小成本投入」" class="headerlink" title="2.1.2 成本「加快活动速度，即是减小成本投入」"></a>2.1.2 成本「加快活动速度，即是减小成本投入」</h3><p>在这个核心公式中，我们以杠杆率来衡量各项活动的产出，但是我们同时还需要关注投入的成本：特别是时间。</p><h3 id="2-1-3-均衡活动的投入产出比「选择活动的艺术」"><a href="#2-1-3-均衡活动的投入产出比「选择活动的艺术」" class="headerlink" title="2.1.3 均衡活动的投入产出比「选择活动的艺术」"></a>2.1.3 均衡活动的投入产出比「选择活动的艺术」</h3><p>构建一个 [成本, 产出, 产出/成本] 的三维空间，理论上可以寻找到一个 argmax(产出/成本) 的值。</p><ul><li>在同一活动的三维空间中，尽量离 max(产出/成本) 近的点</li><li>在不同活动的选择中<ul><li>尽量选择 max(产出/成本) 较高的活动 </li><li>尽量选择在限定成本内，exp(产出/成本) 较高的活动</li></ul></li></ul><h2 id="2-2-决策"><a href="#2-2-决策" class="headerlink" title="2.2 决策"></a>2.2 决策</h2><blockquote><p>我们希望决策是由离问题最近，而且最了解问题的人来制定。参考决策的制定过程，是每个经理人每日例行工作中非常重要的一环。</p></blockquote><p><img src="/assets/images/high_output_management/2.2.png" alt="理想决策过程中的三个阶段"></p><h1 id="3-连接-管理-协作"><a href="#3-连接-管理-协作" class="headerlink" title="3 连接 - 管理/协作"></a>3 连接 - 管理/协作</h1><h2 id="3-1-管理实践-认知"><a href="#3-1-管理实践-认知" class="headerlink" title="3.1 管理实践/认知"></a>3.1 管理实践/认知</h2><h3 id="3-1-1-控制模式"><a href="#3-1-1-控制模式" class="headerlink" title="3.1.1 控制模式"></a>3.1.1 控制模式</h3><p>“三个长官”：</p><ul><li>自由市场因素：个人利益</li><li>契约义务：条文约束</li><li>文化价值观：价值观。当环境变化太快、规则无法及时应对时，个人的文化价值观便决定了我们的行动。「换个最简单的说法，文化价值观就是要形成个人对于团队利益的认同，并且愿意牺牲个人利益或者短期利益。长期牺牲或者不是双赢本身就是不合理的，那样是精神控制了。」</li></ul><p>以下是书中提到的最合适的控制模式，主要受限于两个变量：1）个人关注的利益；2）CUA程度「CUA为Complexity、Uncertainty、Ambiguity」，用于衡量一个工作环境的复杂性、不确定性以及指令的模糊性。</p><table><thead><tr><th></th><th>CUA低</th><th>CUA高</th></tr></thead><tbody><tr><td>关注团队利益</td><td>契约义务</td><td>文化价值观</td></tr><tr><td>关注个人利益</td><td>自由市场因素</td><td>/</td></tr></tbody></table><h3 id="3-1-2-工作成熟度及其对应的有效领导风格"><a href="#3-1-2-工作成熟度及其对应的有效领导风格" class="headerlink" title="3.1.2 工作成熟度及其对应的有效领导风格"></a>3.1.2 工作成熟度及其对应的有效领导风格</h3><p>以下表格左侧摘自书内，是相对有效的领导风格，个人理解主要是对于放权及监督的权衡。</p><table><thead><tr><th>部属的工作成熟度</th><th>有效的领导风格</th><th>个人解读</th></tr></thead><tbody><tr><td>高</td><td>组织化，任务导向，告诉员工该做什么，何时完成以及如何着手</td><td>重任务导向</td></tr><tr><td>中</td><td>注重个体，强调双向沟通，给予情绪上的支持及鼓励。上司与下属之间相互了解。</td><td>任务导向为主，过程监督为辅</td></tr><tr><td>低</td><td>经理人的参与程度降低；彼此建立起工作目标及监督系统。</td><td>重过程监督</td></tr></tbody></table><ul><li>工作成熟度越高，对部属的干涉越低；</li><li>不论哪个成熟度，都需要监督过程，这是授权之后经理人的责任；</li><li>放权 &amp; 监督；</li></ul><h2 id="3-2-信息交换"><a href="#3-2-信息交换" class="headerlink" title="3.2 信息交换"></a>3.2 信息交换</h2><p>交办、开会……</p><p>口头、书面……</p><h3 id="3-2-1-开会"><a href="#3-2-1-开会" class="headerlink" title="3.2.1 开会"></a>3.2.1 开会</h3><blockquote><p>会议是人事管理工作必经的媒介。你绝对无法避免开会，但你能让会议更有效率。</p></blockquote><ul><li>「过程导向」会议，通常是例行的。 – 交换信息或技术<ul><li>“规律化”是提升效率最好的方法。</li></ul></li><li>「任务导向」会议，通常有决策产生。 – 解决特定问题</li></ul><h1 id="4、人员"><a href="#4、人员" class="headerlink" title="4、人员"></a>4、人员</h1><p>关注问题：</p><ul><li>意愿：激励「以马斯洛的需求层次理论为基础」</li><li>能力：培训</li></ul><p>其他：人员在职的生命周期：进 与 出。</p><h1 id="5、其他"><a href="#5、其他" class="headerlink" title="5、其他"></a>5、其他</h1><h2 id="5-1-双重报告"><a href="#5-1-双重报告" class="headerlink" title="5.1 双重报告"></a>5.1 双重报告</h2><p>在功能导向的组织中安置专业人员的一个最佳实践。</p><h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><p>拿软件开发的过程来类比经理人的行为，有一些挺有意思的收获。</p><p>经理 = 一个功能模块，负责对外输出整体能力「包含了个体与整体的双重角色，简单定义为：类 -&gt; 模块 -&gt; 系统」</p><p>下属 = 类比为工具类/提供特定职责类，主要负责内部的具体某项内容「只包含个体的角色」</p><p>这个类比模型里， 可以反馈出一些共同点：</p><ul><li>职责：需要对整个功能模块负责，包含了内部的所有类。</li><li>指派：<ul><li>当调用某个类时，需要明确接口，包含输入、输出，以及性能。「对应指派任务的目标、验收点以及deadline。」</li><li>针对不同成熟度的工程师，会给予不同层面的自由度</li></ul></li><li>实践：<ul><li>测试：验收</li><li>多线程并发控制：协作</li><li>……</li></ul></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;/assets/images/high_output_management/main.png&quot; alt=&quot;总纲&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;1、产出导向管理&quot;&gt;&lt;a href=&quot;#1、产出导向管理&quot; class=&quot;headerlink&quot; title=&quot;1
+      
+    
+    </summary>
+    
+      <category term="读书" scheme="https://www.hbiboluo.com/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    
+      <category term="读书笔记" scheme="https://www.hbiboluo.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="管理" scheme="https://www.hbiboluo.com/tags/%E7%AE%A1%E7%90%86/"/>
+    
+  </entry>
   
   <entry>
     <title>短评《如何阅读一本书》</title>

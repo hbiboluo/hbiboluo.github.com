@@ -29,7 +29,7 @@
     <!--Title-->
 
 
-<title>如何避免MySQL死锁（一）- 引子 | 01世界</title>
+<title>读书笔记《金字塔原理》 | 01世界</title>
 
 
     <link rel="alternate" href="/atom.xml" title="01世界" type="application/atom+xml">
@@ -137,9 +137,9 @@
                     <p id="process"></p>
 <article class="post">
     <div class="post-head">
-        <h1 id="如何避免MySQL死锁（一）- 引子">
+        <h1 id="读书笔记《金字塔原理》">
             
-	            如何避免MySQL死锁（一）- 引子
+	            读书笔记《金字塔原理》
             
         </h1>
         <div class="post-meta">
@@ -147,8 +147,8 @@
     
     <span class="categories-meta fa-wrap">
         <i class="fa fa-folder-open-o"></i>
-        <a href="/categories/技术">
-            技术
+        <a href="/categories/读书">
+            读书
         </a>
     </span>
     
@@ -159,16 +159,12 @@
         <span class="tags-meta">
             
                 
-                    <a href="/tags/MySQL" title="MySQL">
-                        MySQL
+                    <a href="/tags/读书笔记" title="读书笔记">
+                        读书笔记
                     </a>
                 
-                    <a href="/tags/死锁" title="死锁">
-                        死锁
-                    </a>
-                
-                    <a href="/tags/哲学家就餐" title="哲学家就餐">
-                        哲学家就餐
+                    <a href="/tags/思维" title="思维">
+                        思维
                     </a>
                 
             
@@ -180,7 +176,7 @@
         
         <span class="fa-wrap">
             <i class="fa fa-clock-o"></i>
-            <span class="date-meta">2019/01/06</span>
+            <span class="date-meta">2019/04/24</span>
         </span>
         
     
@@ -191,28 +187,102 @@
     </div>
     
     <div class="post-body post-content">
-        <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>事情是这样开始的……</p>
-<p>这两天，好友L同学接到新需求，通宵达旦，终于在deadline前顺利上线了。松口气一块约了个饭，话还没聊半晌，leader却来电话了，线上MySQL并发死锁，DBA把日志都发过来了，务必赶紧解决，饭未毕人已凉……</p>
-<p>那如何避免出现MySQL死锁问题呢？于是萌生了写一个系列文章，查缺补漏的同时也总结一下对于MySQL死锁问题的理解。</p>
-<h1 id="哲学家就餐问题"><a href="#哲学家就餐问题" class="headerlink" title="哲学家就餐问题"></a>哲学家就餐问题</h1><p>死锁是在并发场景下产生的，经典的「哲学家就餐问题」很好地抽象了并发过程中的资源竞争情况。</p>
-<p>它可以这样表述，假设有五位哲学家围坐在一张圆形餐桌旁，做以下两件事情之一：吃饭，或者思考。吃东西的时候，他们就停止思考，思考的时候也停止吃东西。每两个哲学家之间有一只筷子。而他们只能使用自己左右手边的那两只筷子。<br><img src="/assets/images/mysql/philosopher.jpg" alt="哲学家就餐问题"></p>
-<p>那么这个模型下的并发问题可以这样描述：</p>
+        <h1 id="0、总述：场景-x-结构"><a href="#0、总述：场景-x-结构" class="headerlink" title="0、总述：场景 x 结构"></a>0、总述：场景 x 结构</h1><p>工作生活中处处都有着场景：表达、提问、思考、解决问题、排兵布阵……</p>
+<p>当其内在没有一个结构来支撑时，往往让人感觉无重点、无逻辑，个人感觉本书的中心是：<strong>给场景赋予结构</strong></p>
+<p><strong>场景 x 结构</strong>的意思是场景与结构中做迪卡尔积，不同场景更适合的结构是不同的，可以想象一个二维表，场景和结构的交叉处是其适用程度的得分。</p>
+<p>另外，<code>结构</code>本身并不是单一结构，可以是复合的。</p>
+<p>本书，从「金字塔」结构进行论述，并且不同的应用场景各有其不同特点。</p>
+<h1 id="1、原理：结构-金字塔"><a href="#1、原理：结构-金字塔" class="headerlink" title="1、原理：结构 - 金字塔"></a>1、原理：结构 - 金字塔</h1><p><img src="/assets/images/pyramid_head.jpg" alt="总纲"><br>五人为伍，二伍为什。</p>
+<h2 id="1-1-金字塔-树"><a href="#1-1-金字塔-树" class="headerlink" title="1.1 金字塔 - 树"></a>1.1 金字塔 - 树</h2><p>树结构对于各个节点延伸出了两个维度的信息：</p>
 <ul>
-<li>死锁：每个哲学家都同时拿起左手的筷子，等待另一边的筷子</li>
-<li>活锁：每个哲学家都同时拿起左手的筷子，然后发现拿不到另一边的筷子，于是都放下已拿起的筷子，周而复始……</li>
-<li>饥饿：某个哲学家拿到两边的筷子之后，一直不放回，那他两边的哲学家就会一直处于饥饿状态</li>
+<li>纵向<ul>
+<li>关系<ul>
+<li>上统下：总结概括、疑问/回答</li>
 </ul>
-<p>死锁问题可以抽象为一个有向图，节点为线程/事务，有向边表示资源/锁的依赖或者等待关系，当图中出现环时，死锁即出现。</p>
-<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>这个系列文章的思路是这样的设计的：</p>
-<ol>
-<li><a href="/2019/01/06/avoid-mysql-deadlock-1/">如何避免MySQL死锁（一）- 引子</a></li>
-<li><a href="/2019/01/06/avoid-mysql-deadlock-2/">如何避免MySQL死锁（二）- MySQL锁</a>：首先得了解竞争的到底是什么？本节，我们将要介绍MySQL的锁的分类、级别。</li>
-<li><a href="/2019/01/07/avoid-mysql-deadlock-3/">如何避免MySQL死锁（三）- SQL语句与锁</a>：了解了锁之后，就需要进一步了解不同SQL语句的加锁策略是怎么样的，才能知道发生了什么</li>
-<li><a href="/2019/01/08/avoid-mysql-deadlock-4/">如何避免MySQL死锁（四）- 阅读死锁日志</a>：出了死锁问题，DBA把日志发过来了，那如何读懂死锁日志呢？</li>
-<li><a href="/2019/01/11/avoid-mysql-deadlock-5/">如何避免MySQL死锁（五）- 实例分析</a>：实例分析、总结</li>
-</ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://zh.wikipedia.org/wiki/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">哲学家就餐问题</a></li>
+</li>
+</ul>
+</li>
+<li>横向<ul>
+<li>关系<ul>
+<li>同一逻辑范畴</li>
+<li>逻辑顺序排列「时间、结构、程度」</li>
+</ul>
+</li>
+<li>原则<ul>
+<li>MECE原则「互相独立、彼此穷尽」</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-2-如何构建"><a href="#1-2-如何构建" class="headerlink" title="1.2 如何构建"></a>1.2 如何构建</h2><ul>
+<li>自上而下</li>
+<li>自下而上</li>
+</ul>
+<h1 id="2、应用：场景-表达-写作-、思考、解决问题、演示"><a href="#2、应用：场景-表达-写作-、思考、解决问题、演示" class="headerlink" title="2、应用：场景 - 表达(写作)、思考、解决问题、演示"></a>2、应用：场景 - 表达(写作)、思考、解决问题、演示</h1><h2 id="2-1-表达-amp-演示"><a href="#2-1-表达-amp-演示" class="headerlink" title="2.1 表达 &amp; 演示"></a>2.1 表达 &amp; 演示</h2><p>此处把表达以及演示合并，共同点都在于是双向过程，在于以受众（听众、读者、观众等）为中心。</p>
+<ul>
+<li>目标<ul>
+<li>吸引/保持受众注意力</li>
+<li>减少受众的接受难度</li>
+</ul>
+</li>
+<li>策略<ul>
+<li>表达：序言（背景、冲突、疑问、答案）、结论先行、</li>
+<li>演示：写好PPT，避免视觉朗诵……</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-思考"><a href="#2-2-思考" class="headerlink" title="2.2 思考"></a>2.2 思考</h2><p><em>避免罗列、概括各组真义。</em></p>
+<h2 id="2-3-解决问题"><a href="#2-3-解决问题" class="headerlink" title="2.3 解决问题"></a>2.3 解决问题</h2><p>务必从问题出发：</p>
+<ul>
+<li>界定问题「可映射到表达里的序言」<ul>
+<li>diff(现状, 目标)</li>
+</ul>
+</li>
+<li>结构化分析 <ul>
+<li>四步曲<ul>
+<li>收集信息「收集发生在界定问题之后！」</li>
+<li>描述发现</li>
+<li>得出结论</li>
+<li>提出方案</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="3、延伸"><a href="#3、延伸" class="headerlink" title="3、延伸"></a>3、延伸</h1><h2 id="3-1-结构延伸"><a href="#3-1-结构延伸" class="headerlink" title="3.1 结构延伸"></a>3.1 结构延伸</h2><ul>
+<li>图，从结构上来说比树更自由，可完成任意节点间的关联<ul>
+<li>结构「过于自由的模型，可以归纳为滥用反而事倍功半」<ul>
+<li>节点</li>
+<li>连接<ul>
+<li>有向（单向、双向） – 更多信息</li>
+</ul>
+</li>
+<li>隐式<ul>
+<li>兄弟关系「并列」– 不如树直观</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>典型结构<ul>
+<li>流程图</li>
+<li>图形结构<ul>
+<li>三角</li>
+<li>矩形</li>
+<li>五星</li>
+<li>雁形</li>
+</ul>
+</li>
+<li>……</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-2-应用延伸"><a href="#3-2-应用延伸" class="headerlink" title="3.2 应用延伸"></a>3.2 应用延伸</h2><ul>
+<li>流程图应用</li>
+<li>组织架构</li>
+<li>……</li>
 </ul>
 
     </div>
@@ -231,15 +301,10 @@
 
 <div class="article-nav prev-next-wrap clearfix">
     
-        <a href="/2019/01/06/avoid-mysql-deadlock-2/" class="pre-post btn btn-default" title="如何避免MySQL死锁（二）- MySQL锁">
-            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-            <span class="hidden-xs">如何避免MySQL死锁（二）- MySQL锁</span>
-        </a>
     
-    
-        <a href="/2018/12/15/productivity/" class="next-post btn btn-default" title="程序猿利器推荐">
+        <a href="/2019/03/21/high_output_management/" class="next-post btn btn-default" title="读书笔记《格鲁夫给经理人的第一课》">
             <span class="hidden-lg">下一篇</span>
-            <span class="hidden-xs">程序猿利器推荐</span><i class="fa fa-angle-right fa-fw"></i>
+            <span class="hidden-xs">读书笔记《格鲁夫给经理人的第一课》</span><i class="fa fa-angle-right fa-fw"></i>
         </a>
     
 </div>
@@ -274,7 +339,7 @@
     <div class="widget">
         <h3 class="title">文章目录</h3>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#引子"><span class="toc-text">引子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#哲学家就餐问题"><span class="toc-text">哲学家就餐问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#思路"><span class="toc-text">思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0、总述：场景-x-结构"><span class="toc-text">0、总述：场景 x 结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1、原理：结构-金字塔"><span class="toc-text">1、原理：结构 - 金字塔</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-金字塔-树"><span class="toc-text">1.1 金字塔 - 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-如何构建"><span class="toc-text">1.2 如何构建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2、应用：场景-表达-写作-、思考、解决问题、演示"><span class="toc-text">2、应用：场景 - 表达(写作)、思考、解决问题、演示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-表达-amp-演示"><span class="toc-text">2.1 表达 &amp; 演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-思考"><span class="toc-text">2.2 思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-解决问题"><span class="toc-text">2.3 解决问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3、延伸"><span class="toc-text">3、延伸</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-结构延伸"><span class="toc-text">3.1 结构延伸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-应用延伸"><span class="toc-text">3.2 应用延伸</span></a></li></ol></li></ol>
         
     </div>
 </aside>
